@@ -9,7 +9,7 @@ import * as sel from "../selectors";
 import * as act from "../actions";
 import { buildCommentsTree } from "../lib/snew";
 
-const proposalConnector = connect(
+const invoiceConnector = connect(
   sel.selectorMap({
     token: compose(
       t => (t ? t.toLowerCase() : t),
@@ -26,15 +26,11 @@ const proposalConnector = connect(
     censoredComment: sel.censoredComment,
     loggedInAsEmail: sel.loggedInAsEmail,
     isAdmin: sel.isAdmin,
-    proposal: sel.proposal,
-    comments: sel.proposalComments,
+    invoice: sel.invoice,
+    comments: sel.invoiceComments,
     commentslikes: sel.commentsLikes,
-    error: or(sel.proposalError, sel.apiPropVoteStatusError),
-    isLoading: or(
-      sel.proposalIsRequesting,
-      sel.setStatusProposalIsRequesting,
-      sel.isApiRequestingPropVoteStatus
-    ),
+    error: or(sel.invoiceError), //, sel.apiPropVoteStatusError),
+    isLoading: or(sel.invoiceIsRequesting, sel.setStatusInvoiceIsRequesting),
     markdownFile: sel.getMarkdownFile,
     otherFiles: sel.getNotMarkdownFile,
     commentsSortOption: sel.commentsSortOption,
@@ -43,12 +39,12 @@ const proposalConnector = connect(
   dispatch =>
     bindActionCreators(
       {
-        onFetchData: act.onFetchProposal,
-        onSetReplyParent: act.onSetReplyParent,
-        onFetchProposalVoteStatus: act.onFetchProposalVoteStatus,
-        onFetchLikedComments: act.onFetchLikedComments,
-        onSetCommentsSortOption: act.onSetCommentsSortOption,
-        resetLastSubmittedProposal: act.resetLastSubmittedProposal
+        onFetchData: act.onFetchInvoice,
+        onSetReplyParent: act.onSetReplyParent
+        //onFetchInvoiceVoteStatus: act.onFetchInvoiceVoteStatus,
+        //onFetchLikedComments: act.onFetchLikedComments,
+        //onSetCommentsSortOption: act.onSetCommentsSortOption,
+        //resetLastSubmittedInvoice: act.resetLastSubmittedInvoice
       },
       dispatch
     )
@@ -61,7 +57,7 @@ class Wrapper extends React.PureComponent {
 
   handleViewAllClick = e => {
     e && e.preventDefault() && e.stopPropagation();
-    this.props.history.push(`/proposals/${this.props.token}`);
+    this.props.history.push(`/invoices/${this.props.token}`);
   };
 
   // create data structure with all the comments on thread uniquely
@@ -92,6 +88,6 @@ class Wrapper extends React.PureComponent {
 
 const wrap = Component =>
   withRouter(
-    proposalConnector(props => <Wrapper {...{ ...props, Component }} />)
+    invoiceConnector(props => <Wrapper {...{ ...props, Component }} />)
   );
 export default wrap;

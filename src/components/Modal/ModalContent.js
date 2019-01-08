@@ -4,17 +4,10 @@ import ConfirmAction from "./contents/ConfirmAction";
 import ConfirmActionWithReason from "./contents/ConfirmActionWithReason";
 import Login from "./contents/Login";
 import OnBoard from "./contents/OnBoard";
-import PaywallModal from "./contents/PaywallModal";
-import CreditsHistoryModal from "./contents/CreditsHistoryModal";
-import ManageCreditsModal from "./contents/ManageCreditsModal";
-import PurchaseCreditsModal from "./contents/PurchaseCreditsModal";
 import ChangeUsernameModal from "./contents/ChangeUsernameModal";
 import ChangePasswordModal from "./contents/ChangePasswordModal";
-import SearchVotesModal from "./contents/SearchVotesModal";
-import StartVoteModal from "../StartVoteModal";
 import ImportIdentityModal from "./contents/ImportIdentityModal";
 import { withRouter } from "react-router-dom";
-import ProposalVersionDiff from "./contents/ProposalVersionDiff";
 
 const mapModalTypeToContent = {
   [modalTypes.CONFIRM_ACTION]: ({ modalData }) => (
@@ -27,22 +20,9 @@ const mapModalTypeToContent = {
     <Login me={modalData} pathname={location.pathname} />
   ),
   [modalTypes.ONBOARD]: ({ modalData }) => <OnBoard me={modalData} />,
-  [modalTypes.PAYWALL_MODAL]: () => <PaywallModal />,
-  [modalTypes.CREDITS_HISTORY_MODAL]: () => <CreditsHistoryModal />,
-  [modalTypes.MANAGE_CREDITS_MODAL]: () => <ManageCreditsModal />,
-  [modalTypes.PURCHASE_CREDITS_MODAL]: () => <PurchaseCreditsModal />,
   [modalTypes.CHANGE_USERNAME_MODAL]: () => <ChangeUsernameModal />,
   [modalTypes.CHANGE_PASSWORD_MODAL]: () => <ChangePasswordModal />,
-  [modalTypes.START_VOTE_MODAL]: ({ modalData }) => (
-    <StartVoteModal me={modalData} />
-  ),
-  [modalTypes.SEARCH_PROPOSAL_VOTES]: ({ modalData }) => (
-    <SearchVotesModal me={modalData} />
-  ),
-  [modalTypes.IMPORT_IDENTITY_MODAL]: () => <ImportIdentityModal />,
-  [modalTypes.PROPOSAL_VERSION_DIFF]: ({ modalData }) => (
-    <ProposalVersionDiff me={modalData} />
-  )
+  [modalTypes.IMPORT_IDENTITY_MODAL]: () => <ImportIdentityModal />
 };
 
 const ModalContent = ({ modalData, location }) => {

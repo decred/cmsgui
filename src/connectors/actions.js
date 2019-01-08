@@ -8,27 +8,15 @@ const actions = connect(
     email: sel.email,
     userid: sel.userid,
     isAdmin: sel.isAdmin,
-    userHasPaid: sel.userHasPaid,
-    userCanExecuteActions: sel.userCanExecuteActions,
-    lastSubmitted: sel.getLastSubmittedProposal,
-    setStatusProposalToken: sel.setStatusProposalToken,
-    setStatusProposalError: sel.setStatusProposalError,
+    setStatusInvoiceToken: sel.setStatusInvoiceToken,
+    setStatusInvoiceError: sel.setStatusInvoiceError,
     authorizeVoteError: sel.apiAuthorizeVoteError,
     authorizeVoteToken: sel.apiAuthorizeVoteToken,
-    userPaywallStatus: sel.getUserPaywallStatus,
-    isRequestingAuthorizeVote: sel.isApiRequestingAuthorizeVote,
-    startVoteToken: sel.apiStartVoteToken,
-    isRequestingStartVote: sel.isApiRequestingStartVote,
-    isApiRequestingSetProposalStatusByToken:
-      sel.isApiRequestingSetProposalStatusByToken,
+    isApiRequestingSetInvoiceStatusByToken:
+      sel.isApiRequestingSetInvoiceStatusByToken,
     startVoteError: sel.apiStartVoteError
   }),
   {
-    onChangeStatus: act.onSubmitStatusProposal,
-    onDeleteDraftProposal: act.onDeleteDraftProposal,
-    onStartVote: act.onStartVote,
-    onAuthorizeVote: act.onAuthorizeVote,
-    onRevokeVote: act.onRevokeVote,
     openModal: act.openModal
   }
 );

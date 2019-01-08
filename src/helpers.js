@@ -1,13 +1,6 @@
 import get from "lodash/fp/get";
 import CryptoJS from "crypto-js";
 import * as pki from "./lib/pki";
-import {
-  PROPOSAL_VOTING_NOT_AUTHORIZED,
-  PROPOSAL_VOTING_AUTHORIZED,
-  PROPOSAL_VOTING_ACTIVE,
-  PROPOSAL_FILTER_ALL,
-  PROPOSAL_VOTING_FINISHED
-} from "./constants.js";
 import { INVALID_FILE } from "./constants";
 
 export const getProposalStatus = proposalStatus =>
@@ -38,7 +31,7 @@ export const getTextFromIndexMd = file => {
 };
 
 export const getHumanReadableError = (errorCode, errorContext = []) => {
-  const genericContactMsg = "please contact Politeia administrators";
+  const genericContactMsg = "please contact CMS administrators";
   const errorMessages = {
     0: "The operation returned an invalid status.",
     1: "The provided email address or password was invalid.",
@@ -80,8 +73,8 @@ export const getHumanReadableError = (errorCode, errorContext = []) => {
     33: "Another user already has that username, please choose another.",
     34: `A verification email has already been sent recently. Please check your email, or wait until it expires and send another one.\n\nYour verification email is set to expire on ${new Date(
       parseInt(errorContext[0] + "000", 10)
-    )}. If you did not receive an email, please contact Politeia administrators.`,
-    35: "The server cannot verify the payment at this time, please try again later or contact Politeia administrators.",
+    )}. If you did not receive an email, please contact CMS administrators.`,
+    35: "The server cannot verify the payment at this time, please try again later or contact CMS administrators.",
     36: "The public key provided is already taken by another user.",
     37: "The proposal cannot be set to that voting status.",
     38: "Your account has been locked due to too many login attempts.",
@@ -109,7 +102,7 @@ export const getHumanReadableError = (errorCode, errorContext = []) => {
     // If the error code sent from the server cannot be translated to any error message,
     // it's an internal error code for an internal server error.
     return (
-      "The server encountered an unexpected error, please contact Politeia " +
+      "The server encountered an unexpected error, please contact CMS " +
       "administrators and include the following error code: " +
       errorCode
     );
@@ -206,29 +199,6 @@ export const isProposalApproved = vs => {
     vs.totalvotes > 0 &&
     yesOption.votesreceived >= (vs.totalvotes * vs.passpercentage) / 100;
   return hasReachedQuorom && hasPassed;
-};
-
-export const countPublicProposals = proposals => {
-  const defaultObj = {
-    [PROPOSAL_VOTING_ACTIVE]: 0,
-    [PROPOSAL_VOTING_NOT_AUTHORIZED]: 0,
-    [PROPOSAL_FILTER_ALL]: 0
-  };
-  return proposals
-    ? proposals.reduce((acc, cur) => {
-        if (
-          cur.status === PROPOSAL_VOTING_NOT_AUTHORIZED ||
-          cur.status === PROPOSAL_VOTING_AUTHORIZED
-        )
-          acc[PROPOSAL_VOTING_NOT_AUTHORIZED]++;
-        else if (cur.status === PROPOSAL_VOTING_ACTIVE)
-          acc[PROPOSAL_VOTING_ACTIVE]++;
-        else if (cur.status === PROPOSAL_VOTING_FINISHED)
-          acc[PROPOSAL_VOTING_FINISHED]++;
-        acc[PROPOSAL_FILTER_ALL]++;
-        return acc;
-      }, defaultObj)
-    : defaultObj;
 };
 
 export const proposalsArrayToObject = arr =>

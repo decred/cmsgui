@@ -4,13 +4,13 @@ import * as pki from "./pki";
 import { sha3_256 } from "js-sha3";
 import get from "lodash/fp/get";
 import MerkleTree from "./merkle";
-import { PROPOSAL_STATUS_UNREVIEWED } from "../constants";
 import {
   getHumanReadableError,
   base64ToArrayBuffer,
   arrayBufferToWordArray,
   utoa
 } from "../helpers";
+import { NEW_INVOICE } from "../actions/types";
 
 export const TOP_LEVEL_COMMENT_PARENTID = "0";
 
@@ -33,22 +33,29 @@ export const digestPayload = payload =>
 
 export const digest = payload => sha3_256(payload);
 
-export const convertMarkdownToFile = markdown => ({
-  name: "index.md",
-  mime: "text/plain; charset=utf-8",
-  payload: utoa(markdown)
+export const convertCSVToFile = csv => ({
+  name: "invoice.csv",
+  mime: "text/csv; charset=utf-8",
+  payload: utoa(csv)
 });
 
-export const makeProposal = (name, markdown, attachments = []) => ({
-  files: [
-    convertMarkdownToFile(name + "\n" + markdown),
+export const invoice = (token, version = null) =>
+  GET(`/invoices/${token}` + (version ? `?version=${version}` : "")).then(
+    getResponse
+  );
+
+export const makeInvoice = (userid, month, year, csv, attachments = []) => ({
+  file: [
+    convertCSVToFile(userid + ": " + month + "/" + year + "/n" + csv),
     ...(attachments || [])
   ].map(({ name, mime, payload }) => ({
     name,
     mime,
     payload,
     digest: digestPayload(payload)
-  }))
+  })),
+  month: parseInt(month),
+  year: parseInt(year)
 });
 
 export const makeComment = (token, comment, parentid) => ({
@@ -69,16 +76,17 @@ export const makeCensoredComment = (token, reason, commentid) => ({
   reason
 });
 
-export const signProposal = (email, proposal) =>
+export const signInvoice = (email, invoice) =>
   pki.myPubKeyHex(email).then(publickey => {
-    const digests = proposal.files
+    const digests = invoice.file
       .map(x => Buffer.from(get("digest", x), "hex"))
       .sort(Buffer.compare);
     const tree = new MerkleTree(digests);
     const root = tree.getRoot().toString("hex");
+    invoice.file = invoice.file[0];
     return pki
       .signStringHex(email, root)
-      .then(signature => ({ ...proposal, publickey, signature }));
+      .then(signature => ({ ...invoice, publickey, signature }));
   });
 
 export const signComment = (email, comment) =>
@@ -158,10 +166,7 @@ const getOptions = (csrf, json, method) => ({
 const POST = (path, csrf, json) =>
   fetch(getUrl(path), getOptions(csrf, json, "POST")).then(parseResponse);
 
-const PUT = (path, csrf, json) =>
-  fetch(getUrl(path), getOptions(csrf, json, "PUT")).then(parseResponse);
-
-export const me = () => GET("/v1/user/me").then(getResponse);
+export const me = () => GET("/").then(getResponse);
 
 export const apiInfo = () =>
   GET("/").then(
@@ -174,15 +179,36 @@ export const apiInfo = () =>
     })
   );
 
-export const newUser = (csrf, email, username, password) =>
-  pki.myPubKeyHex(email).then(publickey =>
-    POST("/user/new", csrf, {
-      email,
-      username,
-      password: digest(password),
-      publickey
-    }).then(getResponse)
-  );
+export const inviteNewUser = (csrf, email) =>
+  POST("/user/invite", csrf, {
+    email
+  }).then(getResponse);
+
+export const newUser = (
+  csrf,
+  email,
+  username,
+  password,
+  name,
+  verificationtoken,
+  location,
+  xpublickey
+) =>
+  pki.signStringHex(email, verificationtoken).then(signature => {
+    pki.myPubKeyHex(email).then(publickey =>
+      POST("/user/new", csrf, {
+        email,
+        verificationtoken,
+        username,
+        password: digest(password),
+        name,
+        publickey,
+        location,
+        xpublickey,
+        signature
+      }).then(getResponse)
+    );
+  });
 
 export const verifyNewUser = searchQuery => {
   const { email, verificationtoken } = qs.parse(searchQuery);
@@ -190,41 +216,23 @@ export const verifyNewUser = searchQuery => {
     .signStringHex(email, verificationtoken)
     .then(signature =>
       GET(
-        "/v1/user/verify?" +
+        "/v1/user/identity/verify?" +
           qs.stringify({ email, verificationtoken, signature })
       )
     )
     .then(getResponse);
 };
 
-export const likedComments = token =>
-  GET(`/v1/user/proposals/${token}/commentslikes`).then(getResponse);
-
-export const proposalPaywallDetails = () =>
-  GET("/v1/proposals/paywall").then(getResponse);
-
-export const userProposalCredits = () =>
-  GET("/v1/user/proposals/credits").then(getResponse);
-
 export const editUser = (csrf, { emailnotifications }) =>
   POST("/user/edit", csrf, {
     emailnotifications
   }).then(getResponse);
-
+//	RouteEditUserExtendedPublicKey = "/user/edit/xpublickey"
 export const manageUser = (csrf, userid, action, reason) =>
   POST("/user/manage", csrf, { userid, action, reason }).then(getResponse);
 
-export const verifyUserPayment = () =>
-  GET("/v1/user/verifypayment").then(getResponse);
-
 export const login = (csrf, email, password) =>
   POST("/login", csrf, { email, password: digest(password) }).then(getResponse);
-
-export const likeComment = (csrf, comment) =>
-  POST("/comments/like", csrf, comment).then(getResponse);
-
-export const censorComment = (csrf, comment) =>
-  POST("/comments/censor", csrf, comment).then(getResponse);
 
 export const changeUsername = (csrf, password, newusername) =>
   POST("/user/username/change", csrf, {
@@ -240,15 +248,6 @@ export const changePassword = (csrf, currentpassword, newpassword) =>
 
 export const forgottenPasswordRequest = (csrf, email) =>
   POST("/user/password/reset", csrf, { email }).then(getResponse);
-
-export const resendVerificationEmailRequest = (csrf, email) =>
-  pki
-    .generateKeys()
-    .then(keys => pki.loadKeys(email, keys))
-    .then(() => pki.myPubKeyHex(email))
-    .then(publickey =>
-      POST("/user/new/resend", csrf, { email, publickey }).then(getResponse)
-    );
 
 export const passwordResetRequest = (
   csrf,
@@ -275,146 +274,76 @@ export const verifyKeyRequest = (csrf, email, verificationtoken) =>
     );
 
 export const policy = () => GET("/v1/policy").then(getResponse);
-export const vetted = after => {
-  return !after
-    ? GET("/v1/proposals/vetted").then(getResponse)
-    : GET(`/v1/proposals/vetted?${qs.stringify({ after })}`).then(getResponse);
-};
-
-export const unvetted = after => {
-  return !after
-    ? GET("/v1/proposals/unvetted").then(getResponse)
-    : GET(`/v1/proposals/unvetted?${qs.stringify({ after })}`).then(
-        getResponse
-      );
-};
-
-export const userProposals = (userid, after) => {
-  return !after
-    ? GET(`/v1/user/proposals?${qs.stringify({ userid })}`).then(getResponse)
-    : GET(`/v1/user/proposals?${qs.stringify({ userid, after })}`).then(
-        getResponse
-      );
-};
 
 export const searchUser = obj =>
   GET(`/v1/users?${qs.stringify(obj)}`).then(getResponse);
 
-export const status = () => GET("/v1/proposals/stats").then(getResponse);
-export const proposal = (token, version = null) =>
-  GET(`/v1/proposals/${token}` + (version ? `?version=${version}` : "")).then(
-    getResponse
-  );
 export const user = userId => GET(`/v1/user/${userId}`).then(getResponse);
-export const proposalComments = token =>
-  GET(`/v1/proposals/${token}/comments`).then(getResponse);
 export const logout = csrf =>
   POST("/logout", csrf, {}).then(() => {
     localStorage.removeItem("state");
     return {};
   });
 
-export const proposalSetStatus = (email, csrf, token, status, censorMsg) =>
-  pki
-    .myPubKeyHex(email)
-    .then(publickey =>
-      pki.signStringHex(email, token + status + censorMsg).then(signature =>
-        POST(`/proposals/${token}/status`, csrf, {
-          proposalstatus: status,
-          token,
-          signature,
-          publickey,
-          statuschangemessage: censorMsg
-        })
-      )
-    )
-    .then(getResponse);
+export const userInvoices = (status, page) =>
+  GET(`/v1/user/invoices?${qs.stringify(status)}&${qs.stringify(page)}`).then(
+    getResponse
+  );
 
-export const newProposal = (csrf, proposal) =>
-  POST("/proposals/new", csrf, proposal).then(
+export const invoices = (csrf, status, month, year, page) =>
+  POST("/v1/invoices", csrf, {
+    status,
+    month,
+    year,
+    page
+  }).then(getResponse);
+
+export const reviewInvoices = (csrf, month, year) =>
+  POST("/v1/invoices/review", csrf, {
+    month,
+    year
+  }).then(getResponse);
+
+export const payInvoices = (csrf, month, year, dcrusdrate) =>
+  POST("/v1/invoices/pay", csrf, {
+    month,
+    year,
+    dcrusdrate
+  }).then(getResponse);
+
+export const newInvoice = (csrf, invoice) =>
+  POST("/invoice/submit", csrf, invoice).then(
     ({ response: { censorshiprecord } }) => ({
-      ...proposal,
+      ...invoice,
       censorshiprecord,
       timestamp: Date.now() / 1000,
-      status: PROPOSAL_STATUS_UNREVIEWED
+      status: NEW_INVOICE
     })
   );
 
-export const editProposal = (csrf, proposal) =>
-  POST("/proposals/edit", csrf, proposal).then(getResponse);
+export const editInvoice = (csrf, token, file, publickey, signature) =>
+  POST("/v1/invoice/edit", csrf, {
+    token,
+    file,
+    publickey,
+    signature
+  }).then(getResponse);
 
-export const newComment = (csrf, comment) =>
-  POST("/comments/new", csrf, comment).then(getResponse);
+export const invoiceDetails = (csrf, token) =>
+  POST("/v1/invoice", csrf, {
+    token
+  }).then(getResponse);
 
-export const startVote = (
-  email,
-  csrf,
-  token,
-  duration,
-  quorumpercentage,
-  passpercentage
-) =>
-  pki
-    .myPubKeyHex(email)
-    .then(publickey =>
-      pki.signStringHex(email, token).then(signature =>
-        POST("/proposals/startvote", csrf, {
-          vote: {
-            token,
-            mask: 3,
-            duration,
-            quorumpercentage,
-            passpercentage,
-            options: [
-              {
-                id: "no",
-                description: "Don't approve proposal",
-                bits: 1
-              },
-              {
-                id: "yes",
-                description: "Approve proposal",
-                bits: 2
-              }
-            ]
-          },
-          signature,
-          publickey
-        })
-      )
-    )
-    .then(getResponse);
+export const setInvoiceStatus = (csrf, token, status) =>
+  POST("/v1/invoice/status", csrf, {
+    token,
+    status
+  }).then(getResponse);
 
-export const proposalsVoteStatus = () =>
-  GET("/v1/proposals/votestatus").then(getResponse);
-export const proposalVoteStatus = token =>
-  GET(`/v1/proposals/${token}/votestatus`).then(getResponse);
-export const proposalVoteResults = token =>
-  GET(`/v1/proposals/${token}/votes`).then(getResponse);
-
-export const proposalAuthorizeOrRevokeVote = (
-  csrf,
-  action,
-  token,
-  email,
-  version
-) =>
-  pki
-    .myPubKeyHex(email)
-    .then(publickey =>
-      pki.signStringHex(email, token + version + action).then(signature =>
-        POST("/proposals/authorizevote", csrf, {
-          action,
-          token,
-          signature,
-          publickey
-        })
-      )
-    )
-    .then(getResponse);
-
-export const proposalPaywallPayment = () =>
-  GET("/v1/proposals/paywallpayment").then(getResponse);
-
-export const rescanUserPayments = (csrf, userid) =>
-  PUT("/user/payments/rescan", csrf, { userid }).then(getResponse);
+export const updateInvoicePayment = (csrf, token, address, amount, txid) =>
+  POST("/v1/invoice/payments/update", csrf, {
+    token,
+    address,
+    amount,
+    txid
+  }).then(getResponse);

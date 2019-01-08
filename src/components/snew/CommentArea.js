@@ -1,21 +1,14 @@
 import React from "react";
 import Select from "react-select";
 import { CommentArea as CommentAreaBase } from "snew-classic-ui";
-import proposalConnector from "../../connectors/proposal";
 import { TOP_LEVEL_COMMENT_PARENTID } from "../../lib/api";
-import {
-  PROPOSAL_STATUS_CENSORED,
-  PROPOSAL_STATUS_UNREVIEWED,
-  SORT_BY_TOP,
-  SORT_BY_OLD,
-  SORT_BY_NEW,
-  PROPOSAL_STATUS_UNREVIEWED_CHANGES
-} from "../../constants";
+import invoiceConnector from "../../connectors/invoice";
+import { SORT_BY_TOP, SORT_BY_OLD, SORT_BY_NEW } from "../../constants";
 
 const CommentArea = ({
   comments,
   loggedInAsEmail,
-  proposal,
+  invoice,
   onSetCommentsSortOption,
   commentsSortOption,
   commentid,
@@ -24,17 +17,14 @@ const CommentArea = ({
   numofcomments,
   ...props
 }) =>
-  Object.keys(proposal).length === 0 ||
-  proposal.status === PROPOSAL_STATUS_UNREVIEWED ||
-  proposal.status === PROPOSAL_STATUS_UNREVIEWED_CHANGES ||
-  proposal.status === PROPOSAL_STATUS_CENSORED ? null : (
+  Object.keys(invoice).length === 0 ? null : (
     <CommentAreaBase
       {...{
         ...props,
         singleThread: commentid ? (
           <span>
             Single comment thread.{" "}
-            <a href={`proposals/${token}`} onClick={onViewAllClick}>
+            <a href={`invoices/${token}`} onClick={onViewAllClick}>
               View all
             </a>
           </span>
@@ -66,4 +56,4 @@ const CommentArea = ({
     />
   );
 
-export default proposalConnector(CommentArea);
+export default invoiceConnector(CommentArea);

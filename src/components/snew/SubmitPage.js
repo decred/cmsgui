@@ -1,7 +1,6 @@
 import React from "react";
 import ReactBody from "react-body";
-import submitProposalConnector from "../../connectors/submitProposal";
-import MarkdownEditorField from "../Form/Fields/MarkdownEditorField";
+import submitInvoiceConnector from "../../connectors/submitInvoice";
 import FilesField from "../Form/Fields/FilesField";
 import ErrorField from "../Form/Fields/ErrorField";
 import InputFieldWithError from "../Form/Fields/InputFieldWithError";
@@ -12,8 +11,7 @@ import isUndefined from "lodash/isUndefined";
 import concat from "lodash/concat";
 import cloneDeep from "lodash/cloneDeep";
 import { Field } from "redux-form";
-import MarkdownHelp from "../MarkdownHelp";
-import { MANAGE_CREDITS_MODAL, ONBOARD } from "../Modal/modalTypes";
+import { MANAGE_CREDITS_MODAL } from "../Modal/modalTypes";
 
 const normalizer = (value, previousValue) => {
   let files = [];
@@ -55,11 +53,7 @@ class SubmitPage extends React.Component {
       editingMode
     } = this.props;
     const submitEnabled =
-      !submitting &&
-      !error &&
-      !validationError &&
-      userCanExecuteActions &&
-      (proposalCredits > 0 || editingMode);
+      !submitting && !error && !validationError && userCanExecuteActions;
     return !policy || isLoading ? (
       <PageLoadingIcon />
     ) : (
@@ -89,26 +83,19 @@ class SubmitPage extends React.Component {
                   <div className="roundfield-content">
                     <div style={{ display: "flex", width: "100%" }}>
                       <Field
-                        name="name"
+                        name="month"
                         component={InputFieldWithError}
                         tabIndex={1}
                         type="text"
-                        placeholder="Proposal Name"
+                        placeholder="Month"
                       />
-                      {editingMode ? (
-                        <div
-                          style={{
-                            flex: "1",
-                            display: "flex",
-                            justifyContent: "flex-end"
-                          }}
-                        >
-                          <span style={{ color: "#777" }}>
-                            <i className="fa fa-edit right-margin-5" />
-                            Editing
-                          </span>
-                        </div>
-                      ) : null}
+                      <Field
+                        name="year"
+                        component={InputFieldWithError}
+                        tabIndex={1}
+                        type="text"
+                        placeholder="Year"
+                      />
                     </div>
                     <input name="kind" type="hidden" defaultValue="self" />
                     <div className="usertext">
@@ -116,19 +103,12 @@ class SubmitPage extends React.Component {
                       <div className="usertext-edit md-container" style={{}}>
                         <div className="md">
                           <Field
-                            name="description"
-                            component={MarkdownEditorField}
-                            tabIndex={2}
-                            placeholder="Markdown Entry"
-                            rows={20}
-                            cols={80}
+                            name="csv"
+                            component={InputFieldWithError}
+                            type="text"
+                            tabIndex={1}
+                            placeholder="CSV Invoice Input"
                           />
-                          <a
-                            className="linkish-modal"
-                            onClick={() => openModal(ONBOARD, { tab: 4 })}
-                          >
-                            Learn How to Format your Proposal
-                          </a>
                           <Field
                             name="files"
                             className="attach-button greenprimary"
@@ -137,6 +117,7 @@ class SubmitPage extends React.Component {
                             placeholder="Attach a file"
                             policy={policy}
                             normalize={normalizer}
+                            disabled
                           />
                         </div>
                       </div>
@@ -199,11 +180,6 @@ class SubmitPage extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="spacer">
-                <div className="roundfield">
-                  <MarkdownHelp />
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -212,4 +188,4 @@ class SubmitPage extends React.Component {
   }
 }
 
-export default submitProposalConnector(SubmitPage);
+export default submitInvoiceConnector(SubmitPage);

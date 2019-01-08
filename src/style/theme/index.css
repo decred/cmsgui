@@ -338,7 +338,7 @@ body>.appWrapper>.content>#login {
 }
 .submit-text .morelink a:before {
     font-size: 14px;
-    content: "Submit Proposal";
+    content: "Submit Invoice";
 }
 .not-active {
     pointer-events: none;

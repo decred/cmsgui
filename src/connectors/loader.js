@@ -10,7 +10,6 @@ export default connect(
     keyMismatch: sel.getKeyMismatch,
     apiError: sel.apiError,
     loggedInAsUserId: sel.userid,
-    userCanExecuteActions: sel.userCanExecuteActions,
     lastLoginTime: sel.lastLoginTimeFromLoginResponse,
     onboardViewed: sel.onboardViewed,
     identityImportSuccess: sel.identityImportSuccess
@@ -23,7 +22,7 @@ export default connect(
         openModal: act.openModal,
         confirmWithModal: act.confirmWithModal,
         setOnboardAsViewed: act.setOnboardAsViewed,
-        onLoadDraftProposals: act.onLoadDraftProposals
+        onLoadDraftInvoices: act.onLoadDraftInvoices
       },
       dispatch
     )

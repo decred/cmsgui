@@ -36,7 +36,7 @@ class Loader extends Component {
 
   componentDidUpdate(prevProps) {
     if (!prevProps.loggedInAsEmail && this.props.loggedInAsEmail) {
-      this.props.onLoadDraftProposals(this.props.loggedInAsEmail);
+      this.props.onLoadDraftInvoices(this.props.loggedInAsEmail);
     }
     if (prevProps.userPubkey && this.props.userPubkey) {
       verifyUserPubkey(
@@ -51,7 +51,7 @@ class Loader extends Component {
       setOnboardAsViewed();
       this.props
         .confirmWithModal(CONFIRM_ACTION, {
-          title: "Welcome to Politeia!",
+          title: "Welcome to Contractor Management System!",
           message: (
             <React.Fragment>
               <strong
@@ -61,13 +61,13 @@ class Loader extends Component {
                   fontWeight: "1.2em"
                 }}
               >
-                Are you new to Politeia? Would you like to read more on how all
-                of this works?
+                Are you new to CMS? Would you like to read more on how all of
+                this works?
               </strong>
               <br />
               <p style={{ marginTop: "10px", fontStyle: "italic" }}>
                 The following information can be reviewed by clicking 'Learn
-                More about Politiea' in the sidebar.
+                More about CMS' in the sidebar.
               </p>
             </React.Fragment>
           ),
@@ -119,7 +119,7 @@ const LoaderComponent = withRouter(loaderConnector(Loader));
 const StagingAlert = () =>
   process.env.REACT_APP_STAGING ? (
     <div className="staging-alert">
-      This is the politeia staging environment. DO NOT USE, YOU WILL LOSE YOUR
+      This is the cms staging environment. DO NOT USE, YOU WILL LOSE YOUR
       DECRED.
     </div>
   ) : null;

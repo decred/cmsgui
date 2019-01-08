@@ -438,39 +438,6 @@ describe("test api actions (actions/api.js)", () => {
     );
   });
 
-  test("on fetch user proposals action", async () => {
-    const path = "/api/v1/user/proposals";
-    const params = [FAKE_USER.id];
-    await assertApiActionOnSuccess(
-      path,
-      api.onFetchUserProposals,
-      params,
-      [
-        { type: act.REQUEST_USER_PROPOSALS },
-        { type: act.RECEIVE_USER_PROPOSALS, error: false }
-      ],
-      {
-        query: {
-          userid: FAKE_USER.id
-        }
-      }
-    );
-    await assertApiActionOnError(
-      path,
-      api.onFetchUserProposals,
-      params,
-      e => [
-        { type: act.REQUEST_USER_PROPOSALS, error: false, payload: undefined },
-        { type: act.RECEIVE_USER_PROPOSALS, error: true, payload: e }
-      ],
-      {
-        query: {
-          userid: FAKE_USER.id
-        }
-      }
-    );
-  });
-
   test("on fetch vetted action", async () => {
     const path = "/api/v1/proposals/vetted";
     await assertApiActionOnSuccess(
@@ -860,64 +827,6 @@ describe("test api actions (actions/api.js)", () => {
   test("verify user payment with politeia action", async () => {
     // TODO: verify if this function can be improved to dispatch actions
     // as all other api request actions currently do
-  });
-
-  test("on fetch votes status", async () => {
-    const path = "/api/v1/proposals/votestatus";
-
-    await assertApiActionOnSuccess(
-      path,
-      api.onFetchProposalsVoteStatus,
-      [],
-      [
-        { type: act.REQUEST_PROPOSALS_VOTE_STATUS },
-        { type: act.RECEIVE_PROPOSALS_VOTE_STATUS, error: false }
-      ]
-    );
-
-    await assertApiActionOnError(
-      path,
-      api.onFetchProposalsVoteStatus,
-      [],
-      e => [
-        {
-          type: act.REQUEST_PROPOSALS_VOTE_STATUS,
-          error: false,
-          payload: undefined
-        },
-        { type: act.RECEIVE_PROPOSALS_VOTE_STATUS, error: true, payload: e }
-      ]
-    );
-  });
-
-  test("on fetch vote status for a single proposal", async () => {
-    const path = "/api/v1/proposals/any/votestatus";
-    const token = "any";
-    const params = [token];
-
-    await assertApiActionOnSuccess(
-      path,
-      api.onFetchProposalVoteStatus,
-      params,
-      [
-        { type: act.REQUEST_PROPOSAL_VOTE_STATUS },
-        { type: act.RECEIVE_PROPOSAL_VOTE_STATUS, error: false }
-      ]
-    );
-
-    await assertApiActionOnError(
-      path,
-      api.onFetchProposalVoteStatus,
-      params,
-      e => [
-        {
-          type: act.REQUEST_PROPOSAL_VOTE_STATUS,
-          error: false,
-          payload: { token }
-        },
-        { type: act.RECEIVE_PROPOSAL_VOTE_STATUS, error: true, payload: e }
-      ]
-    );
   });
 
   test("on fetch user details action", async () => {

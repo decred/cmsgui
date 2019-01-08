@@ -21,7 +21,7 @@ class PrivateKeyDownloadManager extends Component {
       <div className="private-key-identity clearfloat">
         {this.state && this.state.keyData && !this.props.keyMismatch && (
           <FileDownloadLink
-            filename="politeia-pki.json"
+            filename="cms-pki.json"
             mime="application/json;charset=utf-8"
             data={this.state.keyData}
           >

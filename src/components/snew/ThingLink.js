@@ -4,28 +4,12 @@ import { getProposalStatus } from "../../helpers";
 import { withRouter } from "react-router-dom";
 import * as modalTypes from "../Modal/modalTypes";
 import actions from "../../connectors/actions";
-import ButtonWithLoadingIcon from "./ButtonWithLoadingIcon";
-import CensorMessage from "../CensorMessage";
 import DownloadBundle from "../DownloadBundle";
 import Message from "../Message";
 import ProposalImages from "../ProposalImages";
-import thingLinkConnector from "../../connectors/thingLink";
 import Tooltip from "../Tooltip";
-import VoteStats from "../VoteStats";
 import VersionPicker from "../VersionPicker";
 // import Diff from "./Markdown/Diff";
-
-import {
-  PROPOSAL_STATUS_ABANDONED,
-  PROPOSAL_STATUS_CENSORED,
-  PROPOSAL_STATUS_PUBLIC,
-  PROPOSAL_STATUS_UNREVIEWED_CHANGES,
-  PROPOSAL_STATUS_UNREVIEWED,
-  PROPOSAL_VOTING_ACTIVE,
-  PROPOSAL_VOTING_AUTHORIZED,
-  PROPOSAL_VOTING_FINISHED,
-  PROPOSAL_VOTING_NOT_AUTHORIZED
-} from "../../constants";
 
 const ToggleIcon = (type, onClick) => (
   <button className="collapse-icon-button" onClick={onClick}>
@@ -53,10 +37,8 @@ class ThingLinkComp extends React.Component {
       name,
       author,
       authorid,
-      censorMessage,
       domain,
       rank = 0,
-      userid,
       draftId,
       version,
       subreddit,
@@ -73,76 +55,24 @@ class ThingLinkComp extends React.Component {
       review_status,
       numcomments,
       lastSubmitted,
-      loggedInAsEmail,
-      isAdmin,
-      userCanExecuteActions,
-      onChangeStatus,
-      onStartVote,
       openModal,
-      onAuthorizeVote,
-      onRevokeVote,
       setStatusProposalToken,
       onDeleteDraftProposal,
       setStatusProposalError,
-      isTestnet,
-      getVoteStatus,
       confirmWithModal,
       userId,
       comments,
       authorizeVoteToken,
-      isRequestingAuthorizeVote,
       authorizeVoteError,
-      isRequestingStartVote,
       startVoteToken,
       startVoteError,
-      isApiRequestingSetProposalStatusByToken,
       commentid
     } = this.props;
-    const voteStatus = getVoteStatus(id) && getVoteStatus(id).status;
-    const isAbandoned = review_status === PROPOSAL_STATUS_ABANDONED;
-    const isCensored = review_status === PROPOSAL_STATUS_CENSORED;
-    const isUnvetted =
-      review_status === PROPOSAL_STATUS_UNREVIEWED ||
-      review_status === PROPOSAL_STATUS_UNREVIEWED_CHANGES;
-    const isVetted = review_status === PROPOSAL_STATUS_PUBLIC;
-    const displayVersion = review_status === PROPOSAL_STATUS_PUBLIC;
-    const isVotingActiveOrFinished =
-      voteStatus === PROPOSAL_VOTING_ACTIVE ||
-      voteStatus === PROPOSAL_VOTING_FINISHED;
-    const isEditable =
-      authorid === userId &&
-      !isVotingActiveOrFinished &&
-      !isAbandoned &&
-      !isCensored &&
-      voteStatus !== PROPOSAL_VOTING_AUTHORIZED;
-    const disableEditButton =
-      authorid === userId && voteStatus === PROPOSAL_VOTING_AUTHORIZED;
-    const hasBeenUpdated =
-      review_status === PROPOSAL_STATUS_UNREVIEWED_CHANGES ||
-      parseInt(version, 10) > 1;
-    const currentUserIsTheAuthor = authorid === userId;
-    const userCanAuthorizeTheVote =
-      currentUserIsTheAuthor &&
-      voteStatus &&
-      (voteStatus === PROPOSAL_VOTING_NOT_AUTHORIZED && !isAbandoned);
-    const userCanRevokeVote =
-      currentUserIsTheAuthor && voteStatus === PROPOSAL_VOTING_AUTHORIZED;
-    const adminCanStartTheVote =
-      isAdmin &&
-      !isAbandoned &&
-      voteStatus === PROPOSAL_VOTING_AUTHORIZED &&
-      (authorid !== userid || isTestnet);
-    const enableAdminActionsForUnvetted =
-      isAdmin && isUnvetted && (authorid !== userid || isTestnet);
+    const isEditable = authorid === userId;
+    const disableEditButton = authorid !== userId;
     const hasComment = () => {
       return comments.length > 0;
     };
-    const isAbandonable =
-      isVetted &&
-      !isVotingActiveOrFinished &&
-      voteStatus !== PROPOSAL_VOTING_AUTHORIZED &&
-      isAdmin &&
-      !isAbandoned;
 
     // errors
     const errorSetStatus =
@@ -151,29 +81,9 @@ class ThingLinkComp extends React.Component {
     const errorStartVote = startVoteToken === id && startVoteError;
     const allErrors = [errorSetStatus, errorAuthorizeVote, errorStartVote];
 
-    // loading flags
-    const loadingStartVote = isRequestingStartVote && startVoteToken === id;
-    const loadingAuthorizeVote =
-      isRequestingAuthorizeVote && authorizeVoteToken === id;
-
-    const status = isApiRequestingSetProposalStatusByToken(id);
-    const loadingCensor = status && status === PROPOSAL_STATUS_CENSORED;
-    const loadingApprove = status && status === PROPOSAL_STATUS_PUBLIC;
-    const loadingAbandoned = status && status === PROPOSAL_STATUS_ABANDONED;
-
-    const censoredorAbandoned = () => {
-      if (review_status === PROPOSAL_STATUS_CENSORED) {
-        return "spam";
-      } else if (isAbandoned) {
-        return "abandoned";
-      } else {
-        return null;
-      }
-    };
-
     return (
       <div
-        className={`thing thing-proposal id-${id} odd link ${censoredorAbandoned()}`}
+        className={`thing thing-proposal id-${id} odd link`}
         data-author={author}
         data-author-fullname=""
         data-domain={domain}
@@ -207,11 +117,8 @@ class ThingLinkComp extends React.Component {
               tabIndex={rank}
             >
               {title}{" "}
-              {review_status === PROPOSAL_STATUS_UNREVIEWED_CHANGES ? (
-                <span className="font-12 warning-color">(edited)</span>
-              ) : null}
             </Link>{" "}
-            {expanded && displayVersion && version > 1 ? (
+            {expanded && version > 1 ? (
               <VersionPicker
                 onSelectVersion={selVersion => {
                   openModal(modalTypes.PROPOSAL_VERSION_DIFF, {
@@ -257,28 +164,6 @@ class ThingLinkComp extends React.Component {
                   </span>
                 </Tooltip>
               ) : null}
-              {isVetted ? (
-                <Tooltip
-                  tipStyle={{ top: "20px", fontSize: "14px" }}
-                  text="Check this proposal’s content on our GitHub repository. There you can find proposal's metadata and its comments journals."
-                  position="bottom"
-                >
-                  <a
-                    style={{ color: "#777" }}
-                    href={
-                      isTestnet
-                        ? `https://github.com/decred-proposals/testnet3/tree/master/${id}/${version}`
-                        : `https://github.com/decred-proposals/mainnet/tree/master/${id}/${version}`
-                    }
-                    target="_blank"
-                    className="blue-link"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="fa fa-github right-margin-5" />
-                    See on GitHub
-                  </a>
-                </Tooltip>
-              ) : null}
             </div>
           </span>
           <div
@@ -291,7 +176,7 @@ class ThingLinkComp extends React.Component {
 
           <span className="tagline">
             <span className="submitted-by">
-              {hasBeenUpdated ? "updated " : "submitted "}
+              {"submitted"}
               <DateTooltip createdAt={created_utc} />
               {author && (
                 <span>
@@ -329,7 +214,6 @@ class ThingLinkComp extends React.Component {
               </span>
             </div>
           )}
-          {review_status === 4 && <VoteStats token={id} />}
           {expanded &&
             (lastSubmitted === id ? (
               <Message type="info">
@@ -376,7 +260,6 @@ class ThingLinkComp extends React.Component {
                 <DownloadBundle type="proposal" /> <br />
               </div>
             ))}
-          {censorMessage && <CensorMessage message={censorMessage} />}
           <Expando
             {...{
               expanded: this.state.expanded,
@@ -390,160 +273,6 @@ class ThingLinkComp extends React.Component {
           />
           {this.state.expanded && (
             <ProposalImages readOnly files={otherFiles} />
-          )}
-          {enableAdminActionsForUnvetted ? (
-            <ul style={{ display: "flex" }}>
-              <li key="spam">
-                <ButtonWithLoadingIcon
-                  className={`c-btn c-btn-primary${
-                    !userCanExecuteActions ? " not-active disabled" : ""
-                  }`}
-                  onClick={e =>
-                    confirmWithModal(modalTypes.CONFIRM_ACTION_WITH_REASON, {
-                      reasonPlaceholder:
-                        "Please provide a reason to censor this proposal"
-                    }).then(
-                      ({ reason, confirm }) =>
-                        confirm &&
-                        onChangeStatus(
-                          authorid,
-                          loggedInAsEmail,
-                          id,
-                          PROPOSAL_STATUS_CENSORED,
-                          reason
-                        )
-                    ) && e.preventDefault()
-                  }
-                  text="Spam"
-                  data-event-action="spam"
-                  isLoading={loadingCensor}
-                />
-              </li>
-              <li key="approve">
-                <ButtonWithLoadingIcon
-                  className={`c-btn c-btn-primary${
-                    !userCanExecuteActions ? " not-active disabled" : ""
-                  }`}
-                  onClick={e =>
-                    confirmWithModal(modalTypes.CONFIRM_ACTION, {
-                      message: "Are you sure you want to publish this proposal?"
-                    }).then(
-                      confirm =>
-                        confirm &&
-                        onChangeStatus(
-                          authorid,
-                          loggedInAsEmail,
-                          id,
-                          PROPOSAL_STATUS_PUBLIC
-                        )
-                    ) && e.preventDefault()
-                  }
-                  text="approve"
-                  data-event-action="approve"
-                  isLoading={loadingApprove}
-                />
-              </li>
-            </ul>
-          ) : null}
-          {adminCanStartTheVote ? (
-            <li key="start-vote">
-              <ButtonWithLoadingIcon
-                className={`c-btn c-btn-primary${
-                  !userCanExecuteActions ? " not-active disabled" : ""
-                }`}
-                onClick={e =>
-                  openModal(
-                    modalTypes.START_VOTE_MODAL,
-                    {},
-                    (d, q, p) =>
-                      onStartVote(loggedInAsEmail, id, d, q, p) &&
-                      e.preventDefault()
-                  )
-                }
-                text="Start Vote"
-                data-event-action="start-vote"
-                isLoading={loadingStartVote}
-              />
-            </li>
-          ) : null}
-          {userCanAuthorizeTheVote ? (
-            <li>
-              <ButtonWithLoadingIcon
-                className={`c-btn c-btn-primary${
-                  !userCanExecuteActions ? " not-active disabled" : ""
-                }`}
-                onClick={e =>
-                  confirmWithModal(modalTypes.CONFIRM_ACTION, {
-                    message: (
-                      <span>
-                        Are you sure you want to <b>authorize</b> the admins to
-                        start the voting for this proposal?
-                      </span>
-                    )
-                  }).then(
-                    confirm =>
-                      confirm && onAuthorizeVote(loggedInAsEmail, id, version)
-                  ) && e.preventDefault()
-                }
-                text="Authorize voting to start"
-                data-event-action="authorize-vote"
-                isLoading={loadingAuthorizeVote}
-              />
-            </li>
-          ) : userCanRevokeVote ? (
-            <li>
-              <ButtonWithLoadingIcon
-                className={`c-btn c-btn-primary${
-                  !userCanExecuteActions ? " not-active disabled" : ""
-                }`}
-                onClick={e =>
-                  confirmWithModal(modalTypes.CONFIRM_ACTION, {
-                    message: (
-                      <span>
-                        Are you sure you want to <b>revoke</b> the start voting
-                        authorization for this proposal?
-                      </span>
-                    )
-                  }).then(
-                    confirm =>
-                      confirm && onRevokeVote(loggedInAsEmail, id, version)
-                  ) && e.preventDefault()
-                }
-                text="Revoke voting authorization"
-                data-event-action="revoke-vote"
-                isLoading={loadingAuthorizeVote}
-              />
-            </li>
-          ) : null}
-          {isAbandonable && (
-            <ul style={{ display: "flex" }}>
-              <li key="spam">
-                <ButtonWithLoadingIcon
-                  className={`c-btn c-btn-primary${
-                    !userCanExecuteActions ? " not-active disabled" : ""
-                  }`}
-                  onClick={e =>
-                    confirmWithModal(modalTypes.CONFIRM_ACTION_WITH_REASON, {
-                      reasonPlaceholder:
-                        "Please provide a reason for marking this proposal as abandoned"
-                    }).then(
-                      ({ reason, confirm }) =>
-                        confirm &&
-                        onChangeStatus(
-                          authorid,
-                          loggedInAsEmail,
-                          id,
-                          PROPOSAL_STATUS_ABANDONED,
-                          reason
-                        )
-                    ) && e.preventDefault()
-                  }
-                  text="abandon"
-                  data-event-action="abandon"
-                  isLoading={loadingAbandoned}
-                />
-              </li>
-            </ul>
           )}
           <ul
             className="flat-list buttons"
@@ -562,25 +291,6 @@ class ThingLinkComp extends React.Component {
                 permalink
               </Link>
             </li>
-            {isVotingActiveOrFinished && (
-              <li>
-                <Link
-                  className="bylink comments may-blank proposal-permalink"
-                  href=""
-                  target="_blank"
-                  onClick={e => {
-                    e.preventDefault();
-                    openModal(
-                      modalTypes.SEARCH_PROPOSAL_VOTES,
-                      { id: id, title: title },
-                      null
-                    );
-                  }}
-                >
-                  search votes
-                </Link>
-              </li>
-            )}
           </ul>
           {allErrors.map((error, idx) =>
             error ? (
@@ -602,4 +312,4 @@ class ThingLinkComp extends React.Component {
 
 export const ThingLink = actions(ThingLinkComp);
 
-export default withRouter(thingLinkConnector(ThingLink));
+export default withRouter(ThingLink);

@@ -7,8 +7,8 @@ const SuccessPage = ({ email }) => (
       <div className="centered">
         <h3>Please check your inbox to reset your password.</h3>
         <p>
-          Note that, for privacy reasons, Politeia does not disclose whether an
-          email address has been registered. If you don't receive an email:
+          Note that, for privacy reasons, CMS does not disclose whether an email
+          address has been registered. If you don't receive an email:
         </p>
         <ul>
           {email ? (
@@ -25,7 +25,7 @@ const SuccessPage = ({ email }) => (
           <a href="https://docs.decred.org/support-directory/#join-us-on-slack">
             our Slack
           </a>{" "}
-          to get assistance from Politeia administrators.
+          to get assistance from CMS administrators.
         </p>
       </div>
     </div>

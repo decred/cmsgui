@@ -16,8 +16,7 @@ const userPreferencesConnector = connect(
     isAdmin: sel.isAdmin,
     isApiRequestingEditUser: sel.isApiRequestingEditUser,
     editUserResponse: sel.apiEditUserResponse,
-    editUserError: sel.editUserError,
-    initialValues: sel.getEditUserValues
+    editUserError: sel.editUserError
   }),
   {
     onEditUser: act.onEditUserPreferences

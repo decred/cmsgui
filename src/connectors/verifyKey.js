@@ -16,7 +16,7 @@ const verifyKeyConnector = connect(
   dispatch =>
     bindActionCreators(
       {
-        onVerifyUserKey: act.onVerifyUserKey,
+        //onVerifyUserKey: act.onVerifyUserKey,
         updateMe: act.updateMe,
         keyMismatchAction: act.keyMismatch
       },

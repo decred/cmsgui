@@ -2,7 +2,7 @@ import React from "react";
 import isEqual from "lodash/isEqual";
 import { withRouter } from "react-router-dom";
 import { Content } from "../snew";
-import { commentsToT1, proposalToT3 } from "../../lib/snew";
+import { commentsToT1, invoiceToT3 } from "../../lib/snew";
 import { getTextFromIndexMd } from "../../helpers";
 import { DEFAULT_TAB_TITLE } from "../../constants";
 import Message from "../Message";
@@ -12,7 +12,7 @@ import {
   getUpdatedComments
 } from "./helpers";
 
-class ProposalDetail extends React.Component {
+class InvoiceDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,29 +22,29 @@ class ProposalDetail extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if (
-      (prevProps.proposal &&
+      (prevProps.invoice &&
         this.props &&
-        prevProps.proposal.name !== this.props.proposal.name) ||
+        prevProps.invoice.name !== this.props.invoice.name) ||
       this.props.openedModals.length < prevProps.openedModals.length
     ) {
-      document.title = this.props.proposal.name;
+      document.title = this.props.invoice.name;
     }
     if (
-      (!prevProps.proposal || Object.keys(prevProps.proposal).length === 0) &&
-      this.props.proposal &&
-      Object.keys(this.props.proposal).length > 0 &&
-      this.props.proposal.status === 4
+      (!prevProps.invoice || Object.keys(prevProps.invoice).length === 0) &&
+      this.props.invoice &&
+      Object.keys(this.props.invoice).length > 0 &&
+      this.props.invoice.status === 4
     ) {
-      prevProps.onFetchProposalVoteStatus(prevProps.token);
+      //prevProps.onFetchInvoiceVoteStatus(prevProps.token);
     }
     this.handleUpdateOfComments(prevProps, this.props);
   }
   componentDidMount() {
-    this.props.onFetchLikedComments(this.props.token);
+    //this.props.onFetchLikedComments(this.props.token);
   }
 
   componentWillUnmount() {
-    this.props.resetLastSubmittedProposal();
+    //this.props.resetLastSubmittedInvoice();
     document.title = DEFAULT_TAB_TITLE;
   }
 
@@ -132,7 +132,7 @@ class ProposalDetail extends React.Component {
   render() {
     const {
       isLoading,
-      proposal,
+      invoice,
       token,
       error,
       markdownFile,
@@ -148,7 +148,7 @@ class ProposalDetail extends React.Component {
       <div className="content" role="main">
         <div className="page proposal-page">
           {error ? (
-            <Message type="error" header="Proposal not found" body={error} />
+            <Message type="error" header="Invoice not found" body={error} />
           ) : (
             <Content
               {...{
@@ -166,7 +166,7 @@ class ProposalDetail extends React.Component {
                           {
                             kind: "t3",
                             data: {
-                              ...proposalToT3(proposal, 0).data,
+                              ...invoiceToT3(invoice, 0).data,
                               otherFiles,
                               selftext: markdownFile
                                 ? getTextFromIndexMd(markdownFile)
@@ -192,4 +192,4 @@ class ProposalDetail extends React.Component {
   }
 }
 
-export default withRouter(ProposalDetail);
+export default withRouter(InvoiceDetail);

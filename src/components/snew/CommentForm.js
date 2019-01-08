@@ -1,12 +1,7 @@
 import React from "react";
 import LinkComponent from "./Link";
 import Message from "../Message";
-import replyConnector from "../../connectors/reply";
 import MarkdownEditorField from "../Form/Fields/MarkdownEditorField";
-import {
-  PROPOSAL_VOTING_FINISHED,
-  PROPOSAL_STATUS_ABANDONED
-} from "../../constants";
 import MarkdownHelp from "../MarkdownHelp";
 
 const CommentForm = ({
@@ -21,17 +16,14 @@ const CommentForm = ({
   userCanExecuteActions,
   getVoteStatus,
   token,
-  proposalStatus,
   showContentPolicy = false,
   value,
   onChange,
   onClose,
   hide = false
 }) => {
-  const isVotingFinished =
-    getVoteStatus(token) &&
-    getVoteStatus(token).status === PROPOSAL_VOTING_FINISHED;
-  const isProposalAbandoned = proposalStatus === PROPOSAL_STATUS_ABANDONED;
+  const isVotingFinished = getVoteStatus(token);
+  const isProposalAbandoned = false;
   return loggedInAsEmail ? (
     <React.Fragment>
       <form
@@ -130,4 +122,4 @@ const CommentForm = ({
   ) : null;
 };
 
-export default replyConnector(CommentForm);
+export default CommentForm;

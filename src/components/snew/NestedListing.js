@@ -1,6 +1,5 @@
 import React from "react";
 import { NestedListing as BaseListing } from "snew-classic-ui";
-import replyConnector from "../../connectors/reply";
 
 const NestedListing = ({ replyTo, ...props }) => (
   <BaseListing
@@ -12,4 +11,4 @@ const NestedListing = ({ replyTo, ...props }) => (
   />
 );
 
-export default replyConnector(NestedListing);
+export default NestedListing;

@@ -9,7 +9,7 @@ const INVALID_SECRET_KEY =
   "The provided secret key does not meet the length requirement.";
 const INVALID_KEY_PAIR = "The provided key pair is not valid.";
 const LOAD_KEY_FAILED =
-  "Sorry, something went wrong while importing the identity file, please try again. If the error persists, contact the Politeia support.";
+  "Sorry, something went wrong while importing the identity file, please try again. If the error persists, contact the CMS support.";
 const lower = value => value && value.toLowerCase();
 
 class PrivateKeyFormManager extends React.Component {

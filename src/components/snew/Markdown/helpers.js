@@ -84,7 +84,7 @@ const verifyExternalLink = (e, link, confirmWithModal) => {
     tmpLink.hostname && tmpLink.hostname !== window.top.location.hostname;
   // if this is an external link, show confirmation dialog
   if (externalLink) {
-    document.title = "Leaving Politeia...";
+    document.title = "Leaving CMS...";
     confirmWithModal(modalTypes.CONFIRM_ACTION, {
       style: {
         maxWidth: "600px",
@@ -97,14 +97,14 @@ const verifyExternalLink = (e, link, confirmWithModal) => {
         minHeight: "80px",
         alignItems: "center"
       },
-      title: "Warning: Leaving Politeia",
+      title: "Warning: Leaving CMS",
       message: (
         <div style={{ textAlign: "left", alignItems: "center" }}>
           <p style={{ marginBottom: "10px" }}>
             You are about to be sent to an external website. This can result in
             unintended consequences.
-            <strong> DO NOT</strong> enter your Politeia credentials or reveal
-            any other sensitive information.
+            <strong> DO NOT</strong> enter your CMS credentials or reveal any
+            other sensitive information.
           </p>
           <br />
           <div>

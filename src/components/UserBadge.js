@@ -76,7 +76,7 @@ const UserBadge = ({ userPaywallStatus, loggedInAsEmail }) => {
             left: "20px",
             width: "100px"
           }}
-          text="Account verified. Welcome to Politeia!"
+          text="Account verified. Welcome to CMS!"
           position="bottom"
         >
           <div className="roundbadge-paid hollow">

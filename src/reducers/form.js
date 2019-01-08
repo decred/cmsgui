@@ -2,27 +2,19 @@ import { reducer } from "redux-form";
 import * as act from "../actions/types";
 
 const formReducer = reducer.plugin({
-  "form/proposal": (state, action) => {
+  "form/invoice": (state, action) => {
     switch (action.type) {
-      case act.RECEIVE_NEW_PROPOSAL:
+      case act.RECEIVE_NEW_INVOICE:
         if (action.error) {
           return state;
         }
         return undefined;
-      case act.RECEIVE_EDIT_PROPOSAL:
+      case act.RECEIVE_EDIT_INVOICE:
         if (action.error) {
           return state;
         }
         return undefined;
-      case act.SAVE_DRAFT_PROPOSAL:
-        return undefined;
-      default:
-        return state;
-    }
-  },
-  "form/reply": (state, action) => {
-    switch (action.type) {
-      case act.RECEIVE_NEW_COMMENT:
+      case act.SAVE_DRAFT_INVOICE:
         return undefined;
       default:
         return state;

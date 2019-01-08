@@ -4,27 +4,27 @@
 rm -rf docker-build
 mkdir docker-build
 
-# Build politeiagui
+# Build cmsgui
 docker build . \
 	-f ./Dockerfile-build \
-	-t decred/politeiagui-build
+	-t decred/cmsgui-build
 
 docker run --rm \
 	-v $(pwd)/docker-build:/root/build \
-	decred/politeiagui-build:latest
+	decred/cmsgui-build:latest
 
-# Build docker image to serve politeiagui
+# Build docker image to serve cmsgui
 docker build . \
 	-f ./Dockerfile-serve \
-	-t decred/politeiagui-serve
+	-t decred/cmsgui-serve
 
 echo ""
 echo "==================="
 echo "  Build complete"
 echo "==================="
 echo ""
-echo "You can now run politeiagui with the following command:"
-echo "    docker run -d --rm -p <local port>:80 decred/politeiagui-serve:latest"
+echo "You can now run cmsgui with the following command:"
+echo "    docker run -d --rm -p <local port>:80 decred/cmsgui-serve:latest"
 echo ""
 
 # Cleanup

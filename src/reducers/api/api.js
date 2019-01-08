@@ -1,27 +1,8 @@
 import * as act from "../../actions/types";
+import { DEFAULT_REQUEST_STATE, request, receive, reset } from "../util";
 import {
-  DEFAULT_REQUEST_STATE,
-  request,
-  receive,
-  reset,
-  resetMultiple
-} from "../util";
-import {
-  PROPOSAL_VOTING_ACTIVE,
-  PROPOSAL_VOTING_AUTHORIZED,
-  PROPOSAL_VOTING_NOT_AUTHORIZED
-} from "../../constants";
-import {
-  onReceiveCensoredComment,
-  onReceiveNewComment,
-  onReceiveSetStatus,
-  onReceiveProposals,
-  onReceiveSyncLikeComment,
-  onResetSyncLikeComment,
+  onReceiveInvoices,
   onReceiveUser,
-  onReceiveVoteStatusChange,
-  onReceiveRescanUserPayments,
-  onReceiveProposalVoteResults,
   onReceiveManageUser
 } from "./handlers";
 
@@ -33,17 +14,9 @@ export const DEFAULT_STATE = {
   verifyNewUser: DEFAULT_REQUEST_STATE,
   login: DEFAULT_REQUEST_STATE,
   logout: DEFAULT_REQUEST_STATE,
-  vetted: DEFAULT_REQUEST_STATE,
-  unvetted: DEFAULT_REQUEST_STATE,
-  censorComment: DEFAULT_REQUEST_STATE,
-  proposal: DEFAULT_REQUEST_STATE,
-  proposalComments: DEFAULT_REQUEST_STATE,
-  proposalsVoteStatus: DEFAULT_REQUEST_STATE,
-  proposalVoteStatus: DEFAULT_REQUEST_STATE,
-  commentslikes: DEFAULT_REQUEST_STATE,
-  userProposals: DEFAULT_REQUEST_STATE,
-  newProposal: DEFAULT_REQUEST_STATE,
-  editProposal: DEFAULT_REQUEST_STATE,
+  userInvoices: DEFAULT_REQUEST_STATE,
+  newInvoice: DEFAULT_REQUEST_STATE,
+  editInvoice: DEFAULT_REQUEST_STATE,
   newComment: DEFAULT_REQUEST_STATE,
   forgottenPassword: DEFAULT_REQUEST_STATE,
   passwordReset: DEFAULT_REQUEST_STATE,
@@ -51,10 +24,6 @@ export const DEFAULT_STATE = {
   changePassword: DEFAULT_REQUEST_STATE,
   updateUserKey: DEFAULT_REQUEST_STATE,
   verifyUserKey: DEFAULT_REQUEST_STATE,
-  likeComment: DEFAULT_REQUEST_STATE,
-  unvettedStatus: DEFAULT_REQUEST_STATE,
-  proposalPaywallPayment: DEFAULT_REQUEST_STATE,
-  rescanUserPayments: DEFAULT_REQUEST_STATE,
   userSearch: DEFAULT_REQUEST_STATE,
   email: "",
   keyMismatch: false,
@@ -88,6 +57,8 @@ const api = (state = DEFAULT_STATE, action) =>
     [act.RECEIVE_POLICY]: () => receive("policy", state, action),
     [act.REQUEST_NEW_USER]: () => request("newUser", state, action),
     [act.RECEIVE_NEW_USER]: () => receive("newUser", state, action),
+    [act.REQUEST_INVITE_USER]: () => request("inviteUser", state, action),
+    [act.RECEIVE_INVITE_USER]: () => receive("inviteUser", state, action),
     [act.RESET_NEW_USER]: () => reset("newUser", state),
     [act.REQUEST_VERIFY_NEW_USER]: () =>
       request("verifyNewUser", state, action),
@@ -105,58 +76,27 @@ const api = (state = DEFAULT_STATE, action) =>
       request("changePassword", state, action),
     [act.RECEIVE_CHANGE_PASSWORD]: () =>
       receive("changePassword", state, action),
-    [act.REQUEST_USER_PROPOSALS]: () => request("userProposals", state, action),
-    [act.RECEIVE_USER_PROPOSALS]: () =>
-      onReceiveProposals("userProposals", state, action),
-    [act.REQUEST_VETTED]: () => request("vetted", state, action),
-    [act.RECEIVE_VETTED]: () => onReceiveProposals("vetted", state, action),
-    [act.REQUEST_UNVETTED]: () => request("unvetted", state, action),
-    [act.RECEIVE_UNVETTED]: () => onReceiveProposals("unvetted", state, action),
-    [act.REQUEST_UNVETTED_STATUS]: () =>
-      request("unvettedStatus", state, action),
-    [act.RECEIVE_UNVETTED_STATUS]: () =>
-      receive("unvettedStatus", state, action),
-    [act.REQUEST_PROPOSAL]: () => request("proposal", state, action),
-    [act.RECEIVE_PROPOSAL]: () => receive("proposal", state, action),
-    [act.REQUEST_PROPOSAL_COMMENTS]: () =>
-      request("proposalComments", state, action),
-    [act.RECEIVE_PROPOSAL_COMMENTS]: () =>
-      receive("proposalComments", state, action),
-    [act.REQUEST_LIKE_COMMENT]: () => request("likeComment", state, action),
-    [act.RECEIVE_LIKE_COMMENT]: () => receive("likeComment", state, action),
-    [act.REQUEST_CENSOR_COMMENT]: () => request("censorComment", state, action),
-    [act.RECEIVE_CENSOR_COMMENT]: () => onReceiveCensoredComment(state, action),
-    [act.RECEIVE_SYNC_LIKE_COMMENT]: () =>
-      onReceiveSyncLikeComment(state, action),
-    [act.RESET_SYNC_LIKE_COMMENT]: () => onResetSyncLikeComment(state),
-    [act.REQUEST_LIKED_COMMENTS]: () => request("commentslikes", state, action),
-    [act.RECEIVE_LIKED_COMMENTS]: () => receive("commentslikes", state, action),
+    [act.REQUEST_USER_INVOICES]: () => request("userInvoices", state, action),
+    [act.RECEIVE_USER_INVOICES]: () =>
+      onReceiveInvoices("userInvoices", state, action),
+    [act.REQUEST_INVOICE]: () => request("invoice", state, action),
+    [act.RECEIVE_INVOICE]: () => receive("invoice", state, action),
+    [act.REQUEST_INVOICE_COMMENTS]: () =>
+      request("invoiceComments", state, action),
+    [act.RECEIVE_INVOICE_COMMENTS]: () =>
+      receive("invoiceComments", state, action),
     [act.REQUEST_EDIT_USER]: () => request("editUser", state, action),
     [act.RECEIVE_EDIT_USER]: () => receive("editUser", state, action),
     [act.RECEIVE_EDIT_USER]: () => receive("editUser", state, action),
     [act.RESET_EDIT_USER]: () => reset("editUser", state, action),
     [act.REQUEST_MANAGE_USER]: () => request("manageUser", state, action),
     [act.RECEIVE_MANAGE_USER]: () => onReceiveManageUser(state, action),
-    [act.REQUEST_NEW_PROPOSAL]: () => request("newProposal", state, action),
-    [act.RECEIVE_NEW_PROPOSAL]: () => receive("newProposal", state, action),
+    [act.REQUEST_NEW_INVOICE]: () => request("newInvoice", state, action),
+    [act.RECEIVE_NEW_INVOICE]: () => receive("newInvoice", state, action),
     [act.REQUEST_USER_SEARCH]: () => request("userSearch", state, action),
     [act.RECEIVE_USER_SEARCH]: () => receive("userSearch", state, action),
-    [act.REQUEST_EDIT_PROPOSAL]: () => request("editProposal", state, action),
-    [act.RECEIVE_EDIT_PROPOSAL]: () => receive("editProposal", state, action),
-    [act.REQUEST_NEW_COMMENT]: () => request("newComment", state, action),
-    [act.RECEIVE_NEW_COMMENT]: () => onReceiveNewComment(state, action),
-    [act.REQUEST_PROPOSAL_PAYWALL_DETAILS]: () =>
-      request("proposalPaywallDetails", state, action),
-    [act.RECEIVE_PROPOSAL_PAYWALL_DETAILS]: () =>
-      receive("proposalPaywallDetails", state, action),
-    [act.REQUEST_UPDATE_PROPOSAL_CREDITS]: () =>
-      request("updateProposalCredits", state, action),
-    [act.RECEIVE_UPDATE_PROPOSAL_CREDITS]: () =>
-      receive("updateProposalCredits", state, action),
-    [act.REQUEST_USER_PROPOSAL_CREDITS]: () =>
-      request("userProposalCredits", state, action),
-    [act.RECEIVE_USER_PROPOSAL_CREDITS]: () =>
-      receive("userProposalCredits", state, action),
+    [act.REQUEST_EDIT_INVOICE]: () => request("editInvoice", state, action),
+    [act.RECEIVE_EDIT_INVOICE]: () => receive("editInvoice", state, action),
     [act.REQUEST_FORGOTTEN_PASSWORD_REQUEST]: () =>
       request("forgottenPassword", state, action),
     [act.RECEIVE_FORGOTTEN_PASSWORD_REQUEST]: () =>
@@ -173,19 +113,6 @@ const api = (state = DEFAULT_STATE, action) =>
       request("passwordReset", state, action),
     [act.RECEIVE_PASSWORD_RESET_REQUEST]: () =>
       receive("passwordReset", state, action),
-    [act.RESET_PROPOSAL]: () =>
-      resetMultiple(["newProposal", "editProposal"], state),
-    [act.REQUEST_SETSTATUS_PROPOSAL]: () =>
-      request("setStatusProposal", state, action),
-    [act.RECEIVE_SETSTATUS_PROPOSAL]: () => onReceiveSetStatus(state, action),
-    [act.RECEIVE_START_VOTE]: () =>
-      onReceiveVoteStatusChange(
-        "startVote",
-        PROPOSAL_VOTING_ACTIVE,
-        state,
-        action
-      ),
-    [act.REQUEST_START_VOTE]: () => request("startVote", state, action),
     [act.REQUEST_UPDATED_KEY]: () => request("updateUserKey", state, action),
     [act.RECEIVE_UPDATED_KEY]: () => receive("updateUserKey", state, action),
     [act.REQUEST_VERIFIED_KEY]: () => request("verifyUserKey", state, action),
@@ -196,43 +123,6 @@ const api = (state = DEFAULT_STATE, action) =>
     [act.RECEIVE_USERNAMES_BY_ID]: () =>
       receive("usernamesById", state, action),
     [act.REQUEST_LOGOUT]: () => request("logout", state, action),
-    [act.REQUEST_PROPOSALS_VOTE_STATUS]: () =>
-      request("proposalsVoteStatus", state, action),
-    [act.RECEIVE_PROPOSALS_VOTE_STATUS]: () =>
-      receive("proposalsVoteStatus", state, action),
-    [act.REQUEST_PROPOSAL_VOTE_STATUS]: () =>
-      request("proposalVoteStatus", state, action),
-    [act.RECEIVE_PROPOSAL_VOTE_STATUS]: () =>
-      receive("proposalVoteStatus", state, action),
-    [act.REQUEST_PROPOSAL_VOTE_RESULTS]: () =>
-      request("proposalVoteResults", state, action),
-    [act.RECEIVE_PROPOSAL_VOTE_RESULTS]: () =>
-      onReceiveProposalVoteResults("proposalVoteResults", state, action),
-    [act.REQUEST_AUTHORIZE_VOTE]: () => request("authorizeVote", state, action),
-    [act.RECEIVE_AUTHORIZE_VOTE]: () =>
-      onReceiveVoteStatusChange(
-        "authorizeVote",
-        PROPOSAL_VOTING_AUTHORIZED,
-        state,
-        action
-      ),
-    [act.RECEIVE_REVOKE_AUTH_VOTE]: () =>
-      onReceiveVoteStatusChange(
-        "authorizeVote",
-        PROPOSAL_VOTING_NOT_AUTHORIZED,
-        state,
-        action
-      ),
-    [act.REQUEST_PROPOSAL_PAYWALL_PAYMENT]: () =>
-      request("proposalPaywallPayment", state, action),
-    [act.RECEIVE_PROPOSAL_PAYWALL_PAYMENT]: () =>
-      receive("proposalPaywallPayment", state, action),
-    [act.REQUEST_RESCAN_USER_PAYMENTS]: () =>
-      request("rescanUserPayments", state, action),
-    [act.RECEIVE_RESCAN_USER_PAYMENTS]: () =>
-      onReceiveRescanUserPayments(state, action),
-    [act.RESET_RESCAN_USER_PAYMENTS]: () =>
-      reset("rescanUserPayments", state, action),
     [act.RECEIVE_LOGOUT]: () => {
       if (!action.error) {
         return {
@@ -243,9 +133,7 @@ const api = (state = DEFAULT_STATE, action) =>
           verifyNewUser: DEFAULT_REQUEST_STATE,
           passwordReset: DEFAULT_REQUEST_STATE,
           changePassword: DEFAULT_REQUEST_STATE,
-          verifyUserKey: DEFAULT_REQUEST_STATE,
-          proposalPaywallPayment: DEFAULT_REQUEST_STATE,
-          rescanUserPayments: DEFAULT_REQUEST_STATE
+          verifyUserKey: DEFAULT_REQUEST_STATE
         };
       }
       return receive("logout", state, action);

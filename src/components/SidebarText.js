@@ -2,27 +2,26 @@ import React from "react";
 import Markdown from "./snew/Markdown";
 import modalConnector from "../connectors/modal";
 import { ONBOARD } from "./Modal/modalTypes";
-import PaywallAlert from "./Paywall/PaywallAlert";
 import UserBadge from "./UserBadge";
 
 const aboutText = `
-# About Politeia
+# About Contractor Management System
 
 Decred is an autonomous digital currency. With a hybrid consensus system,
 it is built to be a decentralized, sustainable, and self-ruling currency
 where stakeholders make the rules.
 
-Politeia (Pi) is a censorship-resistant blockchain-anchored public proposal
-system, which empowers users to submit their own projects for self-funding
-from DCR's block subsidy. Pi ensures the ecosystem remains sustainable and
-thrives.
+Contractor Management System (CMS) is a censorship-resistant blockchain-anchored
+semi-public contractor invoicing system, which empowers contractors to submit 
+their own invoices for payment from DCR's treasury. CMS ensures the contractors
+are able to be organized and paid in a timely fashion.
 `;
 
 const resourcesText = `
 ## Resources
 
  * [Website](https://decred.org/) & [Blog](https://blog.decred.org/)
- * [Politeia blog post](https://blog.decred.org/2017/10/25/Politeia/)
+ * [DCC proposal](https://proposals.decred.org/proposals/fa38a3593d9a3f6cb2478a24c25114f5097c572f6dadf24c78bb521ed10992a4)
  * [Decred Constitution](https://docs.decred.org/getting-started/constitution/)
  * [Whitepaper/Technical Brief (pdf)](https://decred.org/dtb001.pdf)
  * [Documentation](https://docs.decred.org/)
@@ -36,7 +35,6 @@ const resourcesText = `
 const SidebarText = props => (
   <div style={{ display: "flex", flexDirection: "column" }}>
     <UserBadge />
-    <PaywallAlert />
     <Markdown
       body={aboutText}
       filterXss={false}
@@ -51,7 +49,7 @@ const SidebarText = props => (
         props.openModal(ONBOARD);
       }}
     >
-      Learn More about Politeia
+      Learn More about CMS
     </span>
     <Markdown
       body={resourcesText}

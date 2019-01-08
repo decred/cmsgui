@@ -9,9 +9,6 @@ const currentUserConnector = connect(
     loggedInAsUsername: sel.loggedInAsUsername,
     isAdmin: sel.isAdmin,
     error: sel.apiLogoutError,
-    userPaywallStatus: sel.getUserPaywallStatus,
-    userCanExecuteActions: sel.userCanExecuteActions,
-    proposalCredits: sel.proposalCredits,
     lastLoginTime: sel.lastLoginTimeFromMeResponse,
     sessionMaxAge: sel.sessionMaxAge,
     loggedInAsUserId: sel.userid

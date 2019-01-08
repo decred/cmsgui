@@ -1,10 +1,5 @@
 import React from "react";
 import { ThingComment as BaseComment } from "snew-classic-ui";
-import replyConnector from "../../connectors/reply";
-import {
-  PROPOSAL_VOTING_FINISHED,
-  PROPOSAL_STATUS_ABANDONED
-} from "../../constants";
 import Message from "../Message";
 
 class ThingComment extends React.PureComponent {
@@ -60,7 +55,6 @@ class ThingComment extends React.PureComponent {
       loggedInAsEmail,
       token,
       keyMismatch,
-      getVoteStatus,
       likeCommentError,
       likeCommentPayload,
       lastVisit,
@@ -69,11 +63,9 @@ class ThingComment extends React.PureComponent {
       toggleCommentForm,
       onCloseCommentForm,
       proposalAuthor,
-      proposalStatus,
       created_utc,
       ...props
     } = this.props;
-    const isProposalAbandoned = proposalStatus === PROPOSAL_STATUS_ABANDONED;
     const isNewComment = lastVisit
       ? lastVisit < created_utc && props.authorid !== props.userid
       : false;
@@ -95,10 +87,10 @@ class ThingComment extends React.PureComponent {
             ...props,
             created_utc,
             showCensorLink: !!props.isAdmin && !props.censored,
-            showArrows: !props.censored && !isProposalAbandoned,
-            grayBody: props.censored || isProposalAbandoned,
+            showArrows: !props.censored,
+            grayBody: props.censored,
             highlightcomment: isCommentPermalink || isNewComment,
-            showReply: !props.censored && !isProposalAbandoned,
+            showReply: !props.censored,
             onShowReply: toggleCommentForm,
             onCensorComment: this.handleCommentCensor,
             onCloseCommentForm,
@@ -107,10 +99,7 @@ class ThingComment extends React.PureComponent {
             isNewComment,
             user: loggedInAsEmail,
             authorHref: `/user/${props.authorid}`,
-            blockvote:
-              keyMismatch ||
-              getVoteStatus(token).status === PROPOSAL_VOTING_FINISHED ||
-              isProposalAbandoned,
+            blockvote: keyMismatch,
             handleVote: onLikeComment,
             token
           }}
@@ -120,4 +109,4 @@ class ThingComment extends React.PureComponent {
   }
 }
 
-export default replyConnector(ThingComment);
+export default ThingComment;

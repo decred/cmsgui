@@ -9,8 +9,13 @@ import {
 const validate = (policy, values) => {
   if (
     !isRequiredValidator(values.email) ||
+    !isRequiredValidator(values.verificationtoken) ||
+    !isRequiredValidator(values.username) ||
     !isRequiredValidator(values.password) ||
-    !isRequiredValidator(values.password_verify)
+    !isRequiredValidator(values.password_verify) ||
+    !isRequiredValidator(values.location) ||
+    !isRequiredValidator(values.xpublickey) ||
+    !isRequiredValidator(values.name)
   ) {
     throw new SubmissionError({ _error: "All fields are required" });
   }
@@ -21,6 +26,22 @@ const validate = (policy, values) => {
         "Your password must be at least " +
         policy.minpasswordlength +
         " characters."
+    });
+  }
+  if (
+    !lengthValidator(
+      values.username,
+      policy.minusernamelength,
+      policy.maxusernamelength
+    )
+  ) {
+    throw new SubmissionError({
+      _error:
+        "Your username must be at least " +
+        policy.minusernamelength +
+        " and less than " +
+        policy.maxusernamelength +
+        "."
     });
   }
 

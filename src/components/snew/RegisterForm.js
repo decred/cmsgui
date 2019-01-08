@@ -48,6 +48,20 @@ const RegisterForm = ({
       </div>
       <div className="c-form-group">
         <label className="screenreader-only" htmlFor="user_reg">
+          token:
+        </label>
+        <Field
+          name="verificationtoken"
+          placeholder="Invitation Token"
+          component="input"
+          type="text"
+          className="c-form-control"
+          id="user_reg"
+          tabIndex={2}
+        />
+      </div>
+      <div className="c-form-group">
+        <label className="screenreader-only" htmlFor="user_reg">
           username:
         </label>
         <Field
@@ -103,6 +117,48 @@ const RegisterForm = ({
             />
           ) : null}
         </div>
+      </div>
+      <div className="c-form-group">
+        <label className="screenreader-only" htmlFor="user_reg">
+          name:
+        </label>
+        <Field
+          name="name"
+          placeholder="Full Name"
+          component="input"
+          type="text"
+          className="c-form-control"
+          id="username_reg"
+          tabIndex={2}
+        />
+      </div>
+      <div className="c-form-group">
+        <label className="screenreader-only" htmlFor="user_reg">
+          location:
+        </label>
+        <Field
+          name="location"
+          placeholder="Location"
+          component="input"
+          type="text"
+          className="c-form-control"
+          id="username_reg"
+          tabIndex={2}
+        />
+      </div>
+      <div className="c-form-group">
+        <label className="screenreader-only" htmlFor="user_reg">
+          extended pubkey:
+        </label>
+        <Field
+          name="xpublickey"
+          placeholder="Extended Pubkey"
+          component="input"
+          type="text"
+          className="c-form-control"
+          id="username_reg"
+          tabIndex={2}
+        />
         <Field
           name="global"
           component={props => <ErrorField title="Cannot sign up" {...props} />}

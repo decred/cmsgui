@@ -3,16 +3,12 @@ import { Switch, Route } from "react-router-dom";
 import {
   SubmitPage,
   LoginSignupPage,
-  Content as ProposalListing
+  Content as InvoiceListing
 } from "./components/snew";
-import vetted from "./connectors/proposals";
 import userDetail from "./connectors/user";
-import proposalDetail from "./connectors/proposal";
-import censored from "./connectors/censoredProposals";
-import unreviewed from "./connectors/unreviewedProposals";
 import admin from "./connectors/admin";
-import newProposal from "./connectors/newProposal";
-import editProposal from "./connectors/editProposal";
+import newInvoice from "./connectors/newInvoice";
+import invoiceDetail from "./connectors/invoice";
 
 import Logout from "./components/LogoutPage";
 import UserLookup from "./components/UserLookupPage";
@@ -21,33 +17,31 @@ import ForgottenPassword from "./components/ForgottenPasswordPage";
 import ForgottenPasswordSuccess from "./components/ForgottenPassword/SuccessPage";
 import PasswordReset from "./components/PasswordResetPage";
 import PasswordResetSuccess from "./components/PasswordReset/SuccessPage";
-import ResendVerificationEmail from "./components/ResendVerificationEmailPage";
-import ResendVerificationEmailSuccess from "./components/ResendVerificationEmail/SuccessPage";
 import Verify from "./components/Verify";
-import UserProposals from "./components/UserProposals";
 import VerifyKey from "./components/VerifyKey";
 import NotFound from "./components/NotFoundPage";
 import ErrorPage from "./components/ErrorPage/";
-import ProposalDetail from "./components/ProposalDetail";
 import UserDetail from "./components/UserDetail";
-import AuthenticatedRoute from "./components/Router/AuthenticatedRoute";
+import UserInvoices from "./components/UserInvoices";
+import InvoiceDetail from "./components/InvoiceDetail";
 import AdminAuthenticatedRoute from "./components/Router/AdminAuthenticatedRoute";
+import AuthenticatedRoute from "./components/Router/AuthenticatedRoute";
 
 class Routes extends Component {
   render() {
     return (
       <Switch>
-        <Route path="/" component={vetted(ProposalListing)} exact />
+        <Route path="/" component={InvoiceListing} exact />
         <Route path="/login" component={LoginSignupPage} />
         <Route path="/user/login" component={LoginSignupPage} />
         <Route path="/user/logout" component={Logout} />
         <Route path="/user/signup/next" component={SignupNext} />
         <Route path="/user/signup" component={LoginSignupPage} />
-        <AuthenticatedRoute
-          path="/user/proposals/:filter?"
-          component={UserProposals}
-        />
         <Route exact path="/password" component={ForgottenPassword} />
+        <AuthenticatedRoute
+          path="/user/invoices/:filter?"
+          component={UserInvoices}
+        />
         <Route
           exact
           path="/user/forgotten/password"
@@ -66,43 +60,30 @@ class Routes extends Component {
         />
         <Route path="/user/verify" component={Verify} exact />
         <Route path="/user/key/verify" component={VerifyKey} exact />
-        <Route path="/user/resend" component={ResendVerificationEmail} exact />
+        <AuthenticatedRoute
+          path="/invoices/new"
+          component={newInvoice(SubmitPage)}
+        />
         <Route
-          path="/user/resend/next"
-          component={ResendVerificationEmailSuccess}
-        />
-        <AuthenticatedRoute
-          path="/proposals/new"
-          component={newProposal(SubmitPage)}
-        />
-        <AuthenticatedRoute
-          path="/proposals/:token/edit"
-          component={editProposal(SubmitPage)}
+          path="/invoices/:token"
+          component={invoiceDetail(InvoiceDetail)}
+          exact
         />
         <AdminAuthenticatedRoute
           path="/admin/censored"
-          component={censored(ProposalListing)}
+          component={InvoiceListing}
         />
         <AdminAuthenticatedRoute
           path="/admin/unreviewed"
-          component={unreviewed(ProposalListing)}
+          component={InvoiceListing}
         />
         <AdminAuthenticatedRoute
           path="/admin"
-          component={admin(ProposalListing)}
+          component={admin(InvoiceListing)}
           exact
         />
         <AdminAuthenticatedRoute path="/admin/users" component={UserLookup} />
         <Route path="/user/:userId" component={userDetail(UserDetail)} />
-        <Route
-          path="/proposals/:token"
-          component={proposalDetail(ProposalDetail)}
-          exact
-        />
-        <Route
-          path="/proposals/:token/comments/:commentid"
-          component={proposalDetail(ProposalDetail)}
-        />
         <Route path="/500" component={ErrorPage} />
         <Route path="*" component={NotFound} />
       </Switch>

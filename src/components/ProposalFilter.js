@@ -1,3 +1,4 @@
+/*
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { Tabs, Tab } from "./Tabs";
@@ -159,3 +160,4 @@ class ProposalFilter extends React.Component {
 }
 
 export default withRouter(ProposalFilter);
+*/

@@ -315,9 +315,8 @@ class GeneralTab extends React.Component {
               </li>
               <br />
               <li>
-                <b>Public key:</b> A key that you share with others (and
-                Politeia) which proves your proposal was signed with your
-                private key.
+                <b>Public key:</b> A key that you share with others (and CMS)
+                which proves your proposal was signed with your private key.
               </li>
             </ul>
             <br />
@@ -325,9 +324,9 @@ class GeneralTab extends React.Component {
               <b>Note:</b> If you've lost your identity (because you've switched
               browsers or cleared your cookies, for example), you can create a
               new one. This new identity will replace your existing one, but
-              note that Politeia keeps a record of all your past public keys.
-              You can also download your current identity for future use or
-              import an existing one.
+              note that CMS keeps a record of all your past public keys. You can
+              also download your current identity for future use or import an
+              existing one.
             </p>
             <br />
             {keyMismatch && !identityImportSuccess && (
@@ -338,9 +337,9 @@ class GeneralTab extends React.Component {
                 body={
                   <div>
                     <p>
-                      The public key on the Politeia server differs from the key
-                      on your browser. This is usually caused from the local
-                      data on your browser being cleared or by using a different
+                      The public key on the CMS server differs from the key on
+                      your browser. This is usually caused from the local data
+                      on your browser being cleared or by using a different
                       browser.
                     </p>
                     <p>

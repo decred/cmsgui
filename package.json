@@ -1,6 +1,6 @@
 {
-  "name": "politeiagui",
-  "version": "0.1.1",
+  "name": "cmsgui",
+  "version": "0.1.0",
   "network": "testnet",
   "dependencies": {
     "concurrently": "^4.1.0",

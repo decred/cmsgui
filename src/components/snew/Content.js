@@ -1,29 +1,26 @@
 import React, { Component } from "react";
 import { Content } from "snew-classic-ui";
-import { formatProposalData } from "../../lib/snew";
+import { formatInvoiceData } from "../../lib/snew";
 import Link from "./Link";
 import ReactBody from "react-body";
 import PageLoadingIcon from "./PageLoadingIcon";
 import Message from "../Message";
-import ProposalFilter from "../ProposalFilter";
-import thingLinkConnector from "../../connectors/thingLink";
 
 export const CustomContent = ({
   bodyClassName = "listing-page",
   listings,
-  proposals,
-  proposalCounts,
-  emptyProposalsMessage = "There are no proposals yet",
+  invoices,
+  invoiceCounts,
+  emptyInvoicesMessage = "There are no invoices yet",
   isLoading,
   error,
   userid,
   header,
-  lastLoadedProposal,
-  onChangeFilter,
+  lastLoadedInvoice,
   filterValue,
   activeVotes,
   onFetchData,
-  onFetchUserProposals,
+  onFetchUserInvoices,
   count,
   showLookUp,
   commentid,
@@ -35,16 +32,16 @@ export const CustomContent = ({
     (commentid && comments && !comments.find(c => c.commentid === commentid));
   const showList =
     (listings && listings.length > 0) ||
-    (proposals && proposals.length > 0) ||
-    (proposalCounts && filterValue >= 0 && proposalCounts[filterValue]) !== 0;
+    (invoices && invoices.length > 0) ||
+    (invoiceCounts && filterValue >= 0 && invoiceCounts[filterValue]) !== 0;
   const showLoadMore =
-    proposals &&
-    ((count && count > proposals.length) ||
-      (proposalCounts &&
+    invoices &&
+    ((count && count > invoices.length) ||
+      (invoiceCounts &&
         filterValue >= 0 &&
-        proposalCounts[filterValue] > proposals.length));
+        invoiceCounts[filterValue] > invoices.length));
   const content = error ? (
-    <Message type="error" header="Error loading proposals" body={error} />
+    <Message type="error" header="Error loading invoices" body={error} />
   ) : isLoading ? (
     <PageLoadingIcon key="content" />
   ) : invalidcomment ? (
@@ -80,12 +77,6 @@ export const CustomContent = ({
           )}
         </div>
       )}
-      <ProposalFilter
-        header={header}
-        handleChangeFilterValue={onChangeFilter}
-        filterValue={filterValue}
-        proposalCounts={proposalCounts}
-      />
       {showList ? (
         <React.Fragment>
           <Content
@@ -96,9 +87,9 @@ export const CustomContent = ({
               lastBlockHeight: props.lastBlockHeight,
               listings: listings || [
                 {
-                  allChildren: proposals
-                    ? proposals.map((proposal, idx) =>
-                        formatProposalData(proposal, idx, activeVotes)
+                  allChildren: invoices
+                    ? invoices.map((invoice, idx) =>
+                        formatInvoiceData(invoice, idx, activeVotes)
                       )
                     : []
                 }
@@ -115,14 +106,14 @@ export const CustomContent = ({
                 onClick={() =>
                   onFetchData
                     ? onFetchData(
-                        lastLoadedProposal
-                          ? lastLoadedProposal.censorshiprecord.token
+                        lastLoadedInvoice
+                          ? lastLoadedInvoice.censorshiprecord.token
                           : null
                       )
-                    : onFetchUserProposals(
+                    : onFetchUserInvoices(
                         userid,
-                        lastLoadedProposal
-                          ? lastLoadedProposal.censorshiprecord.token
+                        lastLoadedInvoice
+                          ? lastLoadedInvoice.censorshiprecord.token
                           : null
                       )
                 }
@@ -134,7 +125,7 @@ export const CustomContent = ({
         </React.Fragment>
       ) : (
         <h1 style={{ textAlign: "center", paddingTop: "125px", color: "#777" }}>
-          {emptyProposalsMessage}
+          {emptyInvoicesMessage}
         </h1>
       )}
     </div>
@@ -157,11 +148,7 @@ class Loader extends Component {
     };
   }
 
-  componentDidMount() {
-    if (this.props.isProposalStatusApproved) {
-      this.props.onChangeProposalStatusApproved(false);
-    }
-  }
+  componentDidMount() {}
 
   componentDidUpdate() {
     const { csrf } = this.props;
@@ -172,8 +159,6 @@ class Loader extends Component {
       this.setState({ isFetched: true });
       this.props.onFetchData && this.props.onFetchData();
       this.props.onFetchStatus && this.props.onFetchStatus();
-      this.props.onFetchProposalsVoteStatus &&
-        this.props.onFetchProposalsVoteStatus();
       getLastBlockHeight && getLastBlockHeight(isTestnet);
     }
   }
@@ -183,4 +168,4 @@ class Loader extends Component {
   }
 }
 
-export default thingLinkConnector(Loader);
+export default Loader;

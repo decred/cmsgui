@@ -25,20 +25,13 @@ const userConnector = connect(
     loggedInAsUserId: sel.userid,
     user: sel.user,
     error: sel.apiUserError,
-    errorRescan: sel.apiRescanUserPaymentsError,
-    isLoadingRescan: sel.isApiRequestingRescanUserPayments,
     isLoading: or(sel.isApiRequestingUser, sel.isApiRequestingMe),
-    isLoadingProposals: or(
-      sel.userProposalsIsRequesting,
-      sel.isApiRequestingPropsVoteStatus
-    ),
+    isLoadingInvoices: or(sel.userInvoicesIsRequesting),
     isTestnet: sel.isTestNet,
     loggedInAsEmail: sel.loggedInAsEmail,
-    userProposals: sel.getUserProposals,
+    userInvoices: sel.getUserInvoices,
     isAdmin: sel.isAdmin,
-    lastLoadedUserDetailProposal: sel.lastLoadedUserDetailProposal,
-    lastLoadedProposal: sel.lastLoadedUserProposal,
-    getSubmittedUserProposals: sel.getSubmittedUserProposals,
+    getSubmittedUserInvoices: sel.getSubmittedUserInvoices,
     identityImportError: sel.identityImportError,
     identityImportSuccess: sel.identityImportSuccess,
     keyMismatch: sel.getKeyMismatch,
@@ -48,8 +41,6 @@ const userConnector = connect(
     verificationToken: sel.verificationToken,
     userPubkey: sel.userPubkey,
     loggedInAsUsername: sel.loggedInAsUsername,
-    amountOfCreditsAddedOnRescan: sel.amountOfCreditsAddedOnRescan,
-    rescanUserId: sel.apiRescanUserPaymentsUserId,
     isApiRequestingMarkAsPaid: state =>
       sel.isApiRequestingManageUser(state) &&
       sel.manageUserAction(state) === MANAGE_USER_CLEAR_USER_PAYWALL,
@@ -74,23 +65,20 @@ const userConnector = connect(
       sel.isApiRequestingManageUser(state) &&
       sel.manageUserAction(state) === MANAGE_USER_REACTIVATE,
     manageUserResponse: sel.manageUserResponse,
-    numOfUserProposals: sel.numOfUserProposals
+    numOfUserInvoices: sel.numOfUserInvoices
   }),
   dispatch =>
     bindActionCreators(
       {
-        onFetchUserProposals: act.onFetchUserProposals,
-        onFetchProposalsVoteStatus: act.onFetchProposalsVoteStatus,
         onFetchData: act.onFetchUser,
+        onFetchUserInvoices: act.onFetchUserInvoices,
         openModal: act.openModal,
         closeModal: act.closeModal,
         keyMismatchAction: act.keyMismatch,
         onIdentityImported: act.onIdentityImported,
         confirmWithModal: act.confirmWithModal,
         onUpdateUserKey: act.onUpdateUserKey,
-        onManageUser: act.onManageUser,
-        onRescan: act.onRescanUserPayments,
-        onResetRescan: act.onResetRescanUserPayments
+        onManageUser: act.onManageUser
       },
       dispatch
     )

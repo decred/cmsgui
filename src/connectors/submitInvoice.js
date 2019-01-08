@@ -4,7 +4,7 @@ import * as sel from "../selectors";
 import * as act from "../actions";
 import compose from "lodash/fp/compose";
 import { reduxForm } from "redux-form";
-import { validate, synchronousValidation, warn } from "../validators/proposal";
+import { validate, synchronousValidation, warn } from "../validators/invoice";
 import { withRouter } from "react-router-dom";
 
 const submitConnector = connect(
@@ -14,15 +14,14 @@ const submitConnector = connect(
     policy: sel.policy,
     userid: sel.userid,
     username: sel.loggedInAsUsername,
-    keyMismatch: sel.getKeyMismatch,
-    proposalCredits: sel.proposalCredits
+    keyMismatch: sel.getKeyMismatch
   }),
   {
     onFetchData: act.onGetPolicy,
     openModal: act.openModal,
-    onResetProposal: act.onResetProposal,
-    onSaveDraft: act.onSaveDraftProposal,
-    onDeleteDraft: act.onDeleteDraftProposal
+    onResetInvoice: act.onResetInvoice,
+    onSaveDraft: act.onSaveDraftInvoice,
+    onDeleteDraft: act.onDeleteDraftInvoice
   }
 );
 
@@ -39,7 +38,7 @@ class SubmitWrapper extends Component {
   onSaveDraft = (...args) => {
     validate(...args);
     this.props.onSaveDraft(...args);
-    this.props.history.push("/user/proposals/drafts");
+    this.props.history.push("/user/invoices/drafts");
   };
 }
 
@@ -51,7 +50,7 @@ export default compose(
   withRouter,
   submitConnector,
   reduxForm({
-    form: "form/proposal",
+    form: "form/invoice",
     touchOnChange: true,
     validate: synchronousValidation,
     enableReinitialize: true,

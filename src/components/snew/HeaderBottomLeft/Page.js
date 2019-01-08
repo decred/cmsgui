@@ -18,7 +18,7 @@ const HeaderBottomLeft = ({ subredditData, useStyle, isAdmin }) => (
       </Link>
     )}
     <span className="hover pagename redditname">
-      <Link href="/">Politeia</Link>
+      <Link href="/">Contractor Management System</Link>
     </span>
     <ul className="tabmenu">
       {isAdmin ? (

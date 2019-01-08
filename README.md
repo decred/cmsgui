@@ -1,4 +1,4 @@
-# Politeia GUI
+# Contractor Management GUI
 
 ## Development
 
@@ -10,7 +10,7 @@
 
     yarn && yarn uidev
 
-### Against politeiawww
+### Against cmswww
 
     yarn && yarn start
 
@@ -35,12 +35,10 @@ Relevant libraries/modules used for testing are:
  - [fetch-mock](http://www.wheresrhys.co.uk/fetch-mock/api) - Mock http requests
  - [redux-mock-store](https://github.com/dmitry-zaets/redux-mock-store) and [redux-actions-assertions](https://github.com/redux-things/redux-actions-assertions) for testing redux actions.
 
-There is more testing to be done, you can check it on this opened issue: https://github.com/decred/politeiagui/issues/376
-
 
 ## Docker
 
-`politeia` can be hosted in a docker container. To build the site and the docker container:
+`contractor-mgmt` can be hosted in a docker container. To build the site and the docker container:
 
 ```bash
 $ ./build_docker.sh
@@ -49,7 +47,7 @@ $ ./build_docker.sh
 The container can then be run with
 
 ```bash
-$ docker run -d --rm -p <local port>:80 decred/politeiagui-serve:latest
+$ docker run -d --rm -p <local port>:80 decred/cmsgui-serve:latest
 ```
 
 ---

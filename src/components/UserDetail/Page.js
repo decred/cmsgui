@@ -4,13 +4,11 @@ import Message from "../Message";
 import { Tabs, Tab } from "../Tabs";
 import GeneralTab from "./GeneralTab";
 import PreferencesTab from "./PreferencesTab";
-import ProposalsTab from "./ProposalsTab";
-import CommentsTab from "./CommentsTab";
+import InvoicesTab from "./InvoicesTab";
 import {
   USER_DETAIL_TAB_GENERAL,
   USER_DETAIL_TAB_PREFERENCES,
-  USER_DETAIL_TAB_PROPOSALS,
-  USER_DETAIL_TAB_COMMENTS
+  USER_DETAIL_TAB_INVOICES
 } from "../../constants";
 import { CHANGE_USERNAME_MODAL } from "../Modal/modalTypes";
 import userConnector from "../../connectors/user";
@@ -25,8 +23,7 @@ const UserDetailPage = ({
   onTabChange,
   dcrdataTxUrl,
   isAdmin,
-  openModal,
-  numOfUserProposals
+  openModal
 }) => {
   const isAdminOrTheUser = user && (isAdmin || loggedInAsUserId === user.id);
   return (
@@ -68,6 +65,12 @@ const UserDetailPage = ({
                   tabId={USER_DETAIL_TAB_GENERAL}
                   onTabChange={onTabChange}
                 />
+                <Tab
+                  title="Invoices"
+                  selected={tabId === USER_DETAIL_TAB_INVOICES}
+                  tabId={USER_DETAIL_TAB_INVOICES}
+                  onTabChange={onTabChange}
+                />
                 {isAdminOrTheUser ? (
                   <Tab
                     title="Preferences"
@@ -76,31 +79,14 @@ const UserDetailPage = ({
                     onTabChange={onTabChange}
                   />
                 ) : null}
-                <Tab
-                  title="Proposals"
-                  count={numOfUserProposals || 0}
-                  selected={tabId === USER_DETAIL_TAB_PROPOSALS}
-                  tabId={USER_DETAIL_TAB_PROPOSALS}
-                  onTabChange={onTabChange}
-                />
-                <Tab
-                  title={"Comments"}
-                  count={(user.comments && user.comments.length) || 0}
-                  selected={tabId === USER_DETAIL_TAB_COMMENTS}
-                  tabId={USER_DETAIL_TAB_COMMENTS}
-                  onTabChange={onTabChange}
-                />
               </Tabs>
             </div>
             <div className="detail-tab-body">
               {tabId === USER_DETAIL_TAB_GENERAL && (
                 <GeneralTab dcrdataTxUrl={dcrdataTxUrl} />
               )}
+              {tabId === USER_DETAIL_TAB_INVOICES && <InvoicesTab />}
               {tabId === USER_DETAIL_TAB_PREFERENCES && <PreferencesTab />}
-              {tabId === USER_DETAIL_TAB_PROPOSALS && (
-                <ProposalsTab count={user.numofproposals} />
-              )}
-              {tabId === USER_DETAIL_TAB_COMMENTS && <CommentsTab />}
             </div>
           </div>
         )}

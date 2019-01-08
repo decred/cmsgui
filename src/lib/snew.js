@@ -5,9 +5,13 @@ import compose from "lodash/fp/compose";
 import union from "lodash/fp/union";
 import { TOP_LEVEL_COMMENT_PARENTID } from "./api";
 
-export const proposalToT3 = (
+export const invoiceToT3 = (
   {
-    name,
+    year,
+    month,
+    signature,
+    file,
+    publickey,
     timestamp,
     status,
     userid,
@@ -16,34 +20,38 @@ export const proposalToT3 = (
     censorshiprecord = {},
     draftId = "",
     version,
-    statuschangemessage
+    statuschangereason
   },
   idx
 ) => ({
   kind: "t3",
   data: {
+    year,
+    month,
+    signature,
+    file,
+    publickey,
     authorid: userid,
     author: username,
     numcomments,
     rank: idx + 1,
-    title: name || "(Proposal name hidden)",
+    title: username + " " + year + " " + month,
     id: censorshiprecord.token,
     name: "t3_" + censorshiprecord.token,
     review_status: status,
     created_utc: timestamp,
-    permalink: `/proposals/${censorshiprecord.token ||
+    permalink: `/invoices/${censorshiprecord.token ||
       (draftId ? `new?draftid=${draftId}` : "")}`,
-    url: `/proposals/${censorshiprecord.token ||
+    url: `/invoices/${censorshiprecord.token ||
       (draftId ? `new?draftid=${draftId}` : "")}`,
     is_self: true,
     draftId,
     version,
-    censorMessage: statuschangemessage
+    censorMessage: statuschangereason
   }
 });
 
-export const formatProposalData = (proposal, idx) =>
-  proposalToT3(proposal, idx);
+export const formatInvoiceData = (invoice, idx) => invoiceToT3(invoice, idx);
 
 const getChildComments = ({ tree, comments }, parentid) =>
   map(
@@ -140,7 +148,7 @@ export const buildCommentsTree = (comments, commentid, tempThreadTree) =>
             name: commentid,
             body: comment,
             created_utc: timestamp,
-            permalink: `/proposals/${token}/comments/${commentid}`
+            permalink: `/invoices/${token}/comments/${commentid}`
           }
         },
         tree: {

@@ -1,21 +1,17 @@
 import React from "react";
 import actionsConnector from "../../connectors/actions";
-import { PAYWALL_STATUS_PAID } from "../../constants";
 
-const SubmitTextSidebox = ({ Link, loggedInAsEmail, userPaywallStatus }) => {
-  const isPaywallPaid = userPaywallStatus === PAYWALL_STATUS_PAID;
+const SubmitTextSidebox = ({ Link, loggedInAsEmail }) => {
   return loggedInAsEmail ? (
     <div className="spacer">
       <div className="sidebox submit submit-text">
-        <div
-          className={`morelink ${isPaywallPaid ? "" : " not-active disabled"}`}
-        >
+        <div className="morelink">
           <Link
             className="login-required access-required"
             data-event-action="submit"
             data-event-detail="self"
             data-type="subreddit"
-            href="/proposals/new"
+            href="/invoices/new"
           />
           <div className="nub" />
         </div>

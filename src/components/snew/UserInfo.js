@@ -4,7 +4,6 @@ import ReactBody from "react-body";
 import currentUserConnector from "../../connectors/currentUser";
 import Dropdown from "../Dropdown";
 import Link from "./Link";
-import ProposalCreditsIndicator from "../ProposalCreditsManager/ProposalCreditsIndicator";
 
 class UserInfo extends React.Component {
   render() {
@@ -20,7 +19,6 @@ class UserInfo extends React.Component {
       <div id="header-right">
         <div id="header-right-content">
           <ReactBody className="loggedin" />
-          <ProposalCreditsIndicator />
           <div className="user">
             <Dropdown
               DropdownTrigger={
@@ -30,9 +28,9 @@ class UserInfo extends React.Component {
                 <ul>
                   <li
                     className="dropdown-list-item"
-                    onClick={() => history.push("/user/proposals")}
+                    onClick={() => history.push("/user/invoices")}
                   >
-                    Proposals
+                    Invoices
                   </li>
                   <li
                     className="dropdown-list-item"
@@ -46,11 +44,11 @@ class UserInfo extends React.Component {
                     }`}
                     onClick={() =>
                       userCanExecuteActions
-                        ? history.push("/proposals/new")
+                        ? history.push("/invoices/new")
                         : null
                     }
                   >
-                    Submit Proposal
+                    Submit Invoice
                   </li>
                   <li
                     className="dropdown-list-item logout-button"

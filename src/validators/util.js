@@ -13,10 +13,13 @@ export function arrayToRegex(arr) {
   return new RegExp(re, "g");
 }
 
-export function proposalNameValidator(name, supportedChars) {
+export function invoiceMonthValidator() {
+  /*
   const re = arrayToRegex(supportedChars);
   const matches = name.match(re);
   return matches.length === name.length;
+  */
+  return true;
 }
 
 export const validateURL = text => {

@@ -1,6 +1,6 @@
 FROM node:10.15.0
 
-LABEL description="politeiagui build"
+LABEL description="cmsgui build"
 LABEL version="1.0"
 LABEL maintainer "holdstockjamie@gmail.com"
 

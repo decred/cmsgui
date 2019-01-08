@@ -1,6 +1,6 @@
 {
-  "name": "Politeia",
-  "short_name": "Politeia",
+  "name": "Contractor Management System",
+  "short_name": "CMS",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

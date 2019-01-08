@@ -3,30 +3,17 @@ import { reset } from "redux-form";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import {
-  onSubmitProposal,
   onChangeUsername,
   onChangePassword,
-  onFetchProposalComments,
-  onSubmitEditedProposal
+  onSubmitEditedInvoice,
+  onSubmitInvoice
 } from "./api";
-import {
-  onFetchProposal as onFetchProposalApi,
-  onSubmitComment as onSubmitCommentApi
-} from "./api";
-import { resetNewProposalData } from "../lib/editors_content_backup";
+import { resetNewInvoiceData } from "../lib/editors_content_backup";
 import * as sel from "../selectors";
 import act from "./methods";
 import { TOP_LEVEL_COMMENT_PARENTID } from "../lib/api";
 import { onLogout, onEditUser, cleanErrors } from "./api";
 import { loadStateLocalStorage, loggedInStateKey } from "../lib/local_storage";
-import {
-  PROPOSAL_VOTING_ACTIVE,
-  PROPOSAL_VOTING_NOT_AUTHORIZED,
-  PROPOSAL_STATUS_UNREVIEWED,
-  PROPOSAL_FILTER_ALL,
-  PROPOSAL_APPROVED,
-  PROPOSAL_REJECTED
-} from "../constants";
 
 export const SET_REPLY_PARENT = "SET_REPLY_PARENT";
 
@@ -41,39 +28,45 @@ export const onSetReplyParent = (
     dispatch(act.SET_REPLY_PARENT(parentId)),
     dispatch(reset("form/reply"))
   ]);
-export const onSaveNewProposal = ({ name, description, files }, _, props) => (
+
+export const onSaveNewInvoice = ({ month, year, csv, signature }, _, props) => (
   dispatch,
   getState
-) =>
+) => {
   dispatch(
-    onSubmitProposal(
+    onSubmitInvoice(
       props.loggedInAsEmail,
       props.userid,
-      props.username,
-      name.trim(),
-      description,
-      files
+      month,
+      year,
+      csv,
+      props.publickey,
+      signature
     )
-  ).then(() => sel.newProposalToken(getState()));
+  ).then(() => sel.newInvoiceToken(getState()));
+};
 
-export const onEditProposal = (
-  { name, description, files },
+export const onEditInvoice = (
+  { month, year, file, signature },
   _,
   props
 ) => dispatch =>
   dispatch(
-    onSubmitEditedProposal(
+    onSubmitEditedInvoice(
       props.loggedInAsEmail,
-      name.trim(),
-      description,
-      files,
+      props.userid,
+      month,
+      year,
+      file,
+      props.publickey,
+      signature,
       props.token
     )
   );
 
-export const onSaveDraftProposal = ({ name, description, files, draftId }) => {
-  resetNewProposalData();
-  return act.SAVE_DRAFT_PROPOSAL({
+export const onSaveDraftInvoice = ({ name, description, files, draftId }) => {
+  resetNewInvoiceData();
+  return act.SAVE_DRAFT_INVOICE({
     name: name.trim(),
     description,
     files,
@@ -82,21 +75,21 @@ export const onSaveDraftProposal = ({ name, description, files, draftId }) => {
   });
 };
 
-export const onLoadDraftProposals = email => {
+export const onLoadDraftInvoices = email => {
   const stateFromLS = loadStateLocalStorage(email);
-  const drafts = sel.draftProposals(stateFromLS) || {};
-  return act.LOAD_DRAFT_PROPOSALS(drafts);
+  const drafts = sel.draftInvoices(stateFromLS) || {};
+  return act.LOAD_DRAFT_INVOICES(drafts);
 };
 
-export const onDeleteDraftProposal = draftId =>
-  act.DELETE_DRAFT_PROPOSAL(draftId);
+export const onDeleteDraftInvoice = draftId =>
+  act.DELETE_DRAFT_INVOICE(draftId);
 
 export const onSaveChangeUsername = ({ password, newUsername }) => (
   dispatch,
   getState
 ) =>
   dispatch(onChangeUsername(password, newUsername)).then(() =>
-    sel.newProposalToken(getState())
+    sel.newInvoiceToken(getState())
   );
 
 export const onSaveChangePassword = ({ existingPassword, newPassword }) => (
@@ -104,19 +97,13 @@ export const onSaveChangePassword = ({ existingPassword, newPassword }) => (
   getState
 ) =>
   dispatch(onChangePassword(existingPassword, newPassword)).then(() =>
-    sel.newProposalToken(getState())
-  );
-
-export const onFetchProposal = token => dispatch =>
-  dispatch(onFetchProposalApi(token)).then(() =>
-    dispatch(onFetchProposalComments(token))
+    sel.newInvoiceToken(getState())
   );
 
 export const onLoadMe = me => dispatch => {
   dispatch(act.LOAD_ME(me));
 };
 
-export const onResetPaywallInfo = () => act.RESET_PAYWALL_INFO();
 export const onChangeAdminFilter = option =>
   act.CHANGE_ADMIN_FILTER_VALUE(option);
 export const onChangePublicFilter = option =>
@@ -124,16 +111,8 @@ export const onChangePublicFilter = option =>
 export const onChangeUserFilter = option =>
   act.CHANGE_USER_FILTER_VALUE(option);
 
-export const onChangeProposalStatusApproved = status =>
-  act.SET_PROPOSAL_APPROVED(status);
-
 export const onIdentityImported = (successMsg, errorMsg = "") =>
   act.IDENTITY_IMPORTED({ errorMsg, successMsg });
-
-export const onSubmitComment = (...args) => dispatch =>
-  dispatch(onSubmitCommentApi(...args)).then(() =>
-    dispatch(onSetReplyParent())
-  );
 
 export const onLocalStorageChange = event => (dispatch, getState) => {
   const state = getState();
@@ -161,54 +140,9 @@ export const onLocalStorageChange = event => (dispatch, getState) => {
   }
 };
 
-export const selectDefaultPublicFilterValue = (dispatch, getState) => {
-  const filterValue = selectDefaultFilterValue(
-    sel.getVettedProposalFilterCounts(getState()),
-    [
-      PROPOSAL_VOTING_ACTIVE,
-      PROPOSAL_VOTING_NOT_AUTHORIZED,
-      PROPOSAL_FILTER_ALL,
-      PROPOSAL_APPROVED,
-      PROPOSAL_REJECTED
-    ]
-  );
-  dispatch(onChangePublicFilter(filterValue));
-};
-
-export const selectDefaultAdminFilterValue = (dispatch, getState) => {
-  const filterValue = selectDefaultFilterValue(
-    sel.getUnvettedProposalFilterCounts(getState()),
-    [PROPOSAL_STATUS_UNREVIEWED, PROPOSAL_FILTER_ALL]
-  );
-  dispatch(onChangeAdminFilter(filterValue));
-};
-
-// Chooses a sensible default filter - don't pick a filter with 0 proposals.
-const selectDefaultFilterValue = (
-  proposalFilterCounts,
-  defaultFilterPreferences
-) => {
-  for (const filterPreference of defaultFilterPreferences) {
-    if ((proposalFilterCounts[filterPreference] || 0) > 0) {
-      return filterPreference;
-    }
-  }
-
-  return defaultFilterPreferences[defaultFilterPreferences.length - 1];
-};
-
 export const setOnboardAsViewed = () => act.SET_ONBOARD_AS_VIEWED();
-
-export const resetLastSubmittedProposal = () => act.RESET_LAST_SUBMITTED();
 
 export const onSetCommentsSortOption = option =>
   act.SET_COMMENTS_SORT_OPTION(option);
 
-export const toggleCreditsPaymentPolling = bool =>
-  act.TOGGLE_CREDITS_PAYMENT_POLLING(bool);
-
-export const toggleProposalPaymentReceived = bool =>
-  act.TOGGLE_PROPOSAL_PAYMENT_RECEIVED(bool);
-
-export const onEditUserPreferences = preferences => dispatch =>
-  dispatch(onEditUser(sel.resolveEditUserValues(preferences)));
+export const onEditUserPreferences = () => dispatch => dispatch(onEditUser());
