@@ -8,11 +8,13 @@ import { clearStateLocalStorage } from "../lib/local_storage";
 import { resetNewInvoiceData } from "../lib/editors_content_backup";
 import act from "./methods";
 
-export const onInvite = act.REQUEST_INVITE_CONFIRMATION;
-export const onInviteConfirm = props => dispatch => {
+export const onInviteUser = act.REQUEST_INVITE_CONFIRMATION;
+/*
+export const onInviteUserConfirm = props => dispatch => {
+  console.log("ahasdas");
   dispatch(onInviteNewUser(props));
 };
-
+*/
 export const onResetInvoice = act.RESET_INVOICE;
 export const onSetEmail = act.SET_EMAIL;
 
@@ -75,7 +77,7 @@ export const withCsrf = fn => (dispatch, getState) => {
   );
 };
 
-export const onInviteNewUser = ({ email }) =>
+export const onInviteUserConfirm = ({ email }) =>
   withCsrf((dispatch, getState, csrf) => {
     dispatch(act.REQUEST_INVITE_USER({ email }));
     return api
@@ -190,7 +192,6 @@ export const onLogin = ({ email, password }) =>
     return api
       .login(csrf, email, password)
       .then(response => {
-        //console.log("login: ", response);
         dispatch(act.RECEIVE_LOGIN(response));
         dispatch(closeModal());
       })
@@ -463,3 +464,6 @@ export const keyMismatch = payload => dispatch =>
 
 export const resetPasswordReset = () => dispatch =>
   dispatch(act.RESET_PASSWORD_RESET_REQUEST());
+
+export const resetInviteUser = () => dispatch =>
+  dispatch(act.RESET_INVITE_USER_REQUEST());

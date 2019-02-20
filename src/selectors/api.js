@@ -31,6 +31,7 @@ export const isApiRequestingResendVerificationEmail = getIsApiRequesting(
   "resendVerificationEmail"
 );
 export const isApiRequestingPasswordReset = getIsApiRequesting("passwordReset");
+export const isApiRequestingInviteUser = getIsApiRequesting("inviteUser");
 const isApiRequestingVetted = getIsApiRequesting("vetted");
 const isApiRequestingUnvetted = getIsApiRequesting("unvetted");
 const isApiRequestingUserInvoices = getIsApiRequesting("userInvoices");
@@ -70,6 +71,7 @@ export const resendVerificationEmailResponse = getApiResponse(
   "resendVerificationEmail"
 );
 export const passwordResetResponse = getApiResponse("passwordReset");
+export const inviteUserResponse = getApiResponse("inviteUser");
 const apiUserInvoicesResponse = getApiResponse("userInvoices");
 const apiInvoiceResponse = getApiResponse("invoice");
 const apiNewInvoiceResponse = getApiResponse("newInvoice");
@@ -397,6 +399,7 @@ export const isApiRequesting = or(
   isApiRequestingForgottenPassword,
   isApiRequestingResendVerificationEmail,
   isApiRequestingPasswordReset,
+  isApiRequestingInviteUser,
   isApiRequestingVetted,
   isApiRequestingUnvetted,
   isApiRequestingUserInvoices,

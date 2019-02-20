@@ -340,6 +340,13 @@ body>.appWrapper>.content>#login {
     font-size: 14px;
     content: "Submit Invoice";
 }
+.sidebox.submit.invite-text .morelink {
+    margin-left: 168px;
+}
+.invite-text .morelink a:before {
+    font-size: 14px;
+    content: "Invite New User";
+}
 .not-active {
     pointer-events: none;
 }

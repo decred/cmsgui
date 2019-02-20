@@ -22,7 +22,7 @@ const CommentForm = ({
   onClose,
   hide = false
 }) => {
-  const isVotingFinished = getVoteStatus(token);
+  const isVotingFinished = false; //getVoteStatus(token);
   const isProposalAbandoned = false;
   return loggedInAsEmail ? (
     <React.Fragment>

@@ -71,7 +71,7 @@ class ThingLinkComp extends React.Component {
     const isEditable = authorid === userId;
     const disableEditButton = authorid !== userId;
     const hasComment = () => {
-      return comments.length > 0;
+      return comments && comments.length > 0;
     };
 
     // errors

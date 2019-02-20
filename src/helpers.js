@@ -30,71 +30,39 @@ export const getTextFromIndexMd = file => {
   return text.substring(text.indexOf("\n") + 1);
 };
 
-export const getHumanReadableError = (errorCode, errorContext = []) => {
-  const genericContactMsg = "please contact CMS administrators";
+export const getHumanReadableError = errorCode => {
+  const genericContactMsg = "Please contact CMS administrators";
   const errorMessages = {
     0: "The operation returned an invalid status.",
     1: "The provided email address or password was invalid.",
-    2: "The provided email address is invalid.",
+    2: "The provided email address is malformed.",
     3: "The provided verification token is invalid. Please ensure you click the link or copy and paste it exactly as it appears in the verification email.",
     4: "The provided verification token is expired. Please register again to receive another email with a new verification token.",
-    5: `The provided proposal is missing the following file(s): ${errorContext.join(
-      ", "
-    )}`,
-    6: "The requested proposal does not exist.",
-    7: `The provided proposal has duplicate files: ${errorContext.join(", ")}`,
-    8: "The provided proposal does not have a valid title.",
-    9: "The submitted proposal has too many markdown files.",
-    10: "The submitted proposal has too many images.",
-    11: "The submitted proposal markdown is too large.",
-    12: "The submitted proposal has one or more images that are too large.",
-    13: "The password you provided is invalid; it's either too short, too long, or has unsupported characters.",
-    14: "The requested comment does not exist.",
-    15: "The provided proposal name was invalid.",
-    16: "The SHA256 checksum for one of the files was incorrect.",
-    17: "The Base64 encoding for one of the files was incorrect.",
-    18: `The MIME type detected for ${
-      errorContext[0]
-    } did not match the provided MIME type. MIME type: ${errorContext[1]}`,
-    19: "The MIME type for one of the files is not supported.",
-    20: "The proposal cannot be set to that status.",
-    21: "The provided public key was invalid.",
-    22: "No active public key was found for your account, please visit your account page to resolve this issue.",
-    23: "The provided signature was invalid.",
-    24: "The provided parameters were invalid.",
-    25: "The private key used for signing was invalid.",
-    26: "Your comment is too long.",
-    27: "The user was not found.",
-    28: `The proposal is in an unexpected state, ${genericContactMsg}.`,
-    29: "You must be logged in to perform this action.",
-    30: "You must pay the registration fee to perform this action.",
-    31: "You cannot change the status of your own proposal, please have another admin review it!",
-    32: "The username you provided is invalid; it's either too short, too long, or has unsupported characters.",
-    33: "Another user already has that username, please choose another.",
-    34: `A verification email has already been sent recently. Please check your email, or wait until it expires and send another one.\n\nYour verification email is set to expire on ${new Date(
-      parseInt(errorContext[0] + "000", 10)
-    )}. If you did not receive an email, please contact CMS administrators.`,
-    35: "The server cannot verify the payment at this time, please try again later or contact CMS administrators.",
-    36: "The public key provided is already taken by another user.",
-    37: "The proposal cannot be set to that voting status.",
-    38: "Your account has been locked due to too many login attempts.",
-    39: "You do not have any proposal credits; you must purchase one before you can submit a proposal.",
-    40: "That is an invalid user edit action.",
-    41: "You are not authorized to perform this action.",
-    42: "This proposal is in the wrong state for that action.",
-    43: "Commenting is not allowed on this proposal.",
-    44: "You cannot vote on this comment.",
-    45: "You must provide a reason for censoring the proposal.",
-    46: "You must provide a reason for censoring the comment.",
-    47: "You cannot censor this comment.",
-    48: "Only the proposal author may perform this action.",
-    49: "The author has not yet authorized a vote for this proposal.",
-    50: "The vote has already been authorized for this proposal.",
-    51: "That is an invalid vote authorization action.",
-    52: "This account has been deactivated.",
-    53: "Your email address has not yet been verified.",
-    54: "Invalid proposal vote parameters",
-    55: "Email address is not verified"
+    5: "The provided verification token is not yet expired.",
+    6: "The invoice is not found.",
+    7: "The provided password was malformed.",
+    8: "The file digest was invalid.",
+    9: "The base64 file content was invalid.",
+    10: "There was an invalid MIME type detected for the file.",
+    11: "There was an unsupported MIME type detected for the file.",
+    12: "There is an invalid invoice status",
+    13: "The public key is invalid.",
+    14: "The given public key has already been submitted.",
+    15: "There is no active public key",
+    16: "The signature is invalid.",
+    17: "The input was invalid.",
+    18: "The signing key was invalid.",
+    19: "User was not found.",
+    20: "User is not logged in.",
+    21: "The given username is malformed.",
+    22: "The given username is already taken.",
+    23: `Account locked due to too many login attempts. ${genericContactMsg}.`,
+    24: "Invalid user manage action.",
+    25: "User already exists.",
+    26: "Reason for action not provided.",
+    27: "Malformed invoice file.",
+    28: "Invoice payment not found.",
+    29: "Duplicate invoice for this month and year."
   };
 
   const error = errorMessages[errorCode];

@@ -20,6 +20,7 @@ export const DEFAULT_STATE = {
   newComment: DEFAULT_REQUEST_STATE,
   forgottenPassword: DEFAULT_REQUEST_STATE,
   passwordReset: DEFAULT_REQUEST_STATE,
+  inviteUser: DEFAULT_REQUEST_STATE,
   changeUsername: DEFAULT_REQUEST_STATE,
   changePassword: DEFAULT_REQUEST_STATE,
   updateUserKey: DEFAULT_REQUEST_STATE,
@@ -113,6 +114,10 @@ const api = (state = DEFAULT_STATE, action) =>
       request("passwordReset", state, action),
     [act.RECEIVE_PASSWORD_RESET_REQUEST]: () =>
       receive("passwordReset", state, action),
+    [act.REQUEST_INVITE_USER_REQUEST]: () =>
+      request("inviteUser", state, action),
+    [act.RECEIVE_INVITE_USER_REQUEST]: () =>
+      receive("inviteUser", state, action),
     [act.REQUEST_UPDATED_KEY]: () => request("updateUserKey", state, action),
     [act.RECEIVE_UPDATED_KEY]: () => receive("updateUserKey", state, action),
     [act.REQUEST_VERIFIED_KEY]: () => request("verifyUserKey", state, action),
@@ -133,7 +138,8 @@ const api = (state = DEFAULT_STATE, action) =>
           verifyNewUser: DEFAULT_REQUEST_STATE,
           passwordReset: DEFAULT_REQUEST_STATE,
           changePassword: DEFAULT_REQUEST_STATE,
-          verifyUserKey: DEFAULT_REQUEST_STATE
+          verifyUserKey: DEFAULT_REQUEST_STATE,
+          inviteUser: DEFAULT_REQUEST_STATE
         };
       }
       return receive("logout", state, action);

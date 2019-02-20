@@ -35,7 +35,7 @@ export const invoiceToT3 = (
     author: username,
     numcomments,
     rank: idx + 1,
-    title: username + " " + year + " " + month,
+    title: username + " invoice for " + month + "/" + year + ": " + status,
     id: censorshiprecord.token,
     name: "t3_" + censorshiprecord.token,
     review_status: status,

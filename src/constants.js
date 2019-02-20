@@ -47,3 +47,11 @@ export const INVALID_FILE =
   "This is not a valid identity file. The identity has to be a JSON file containing the publicKey and the secretKey values.";
 export const LOAD_KEY_FAILED =
   "Sorry, something went wrong while importing the identity file, please try again. If the error persists, contact the CMS support.";
+
+export const INVOICE_STATUS_INVALID = 0; // Invalid status
+export const INVOICE_STATUS_NOTFOUND = 1; // Invoice not found
+export const INVOICE_STATUS_NOTREVIEWED = 2; // Invoice has not been reviewed
+export const INVOICE_STATUS_UNREVIEWEDCHANGES = 3; // Invoice has unreviewed changes
+export const INVOICE_STATUS_REJECTED = 4; // Invoice needs to be revised
+export const INVOICE_STATUS_APPROVED = 5; // Invoice has been approved
+export const INVOICE_STATUS_PAID = 6; // Invoice has been paid

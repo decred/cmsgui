@@ -26,7 +26,7 @@ const InvoicesTab = ({
             ? lastLoadedInvoice
             : lastLoadedUserDetailInvoice
         }
-        proposals={getSubmittedUserInvoices(user.id)}
+        invoices={getSubmittedUserInvoices(user.id)}
         onFetchUserInvoices={onFetchUserInvoices}
         emptyProposalsMessage={"This user has not submitted any proposals"}
       />

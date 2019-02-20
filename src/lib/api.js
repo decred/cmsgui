@@ -39,10 +39,8 @@ export const convertCSVToFile = csv => ({
   payload: utoa(csv)
 });
 
-export const invoice = (token, version = null) =>
-  GET(`/invoices/${token}` + (version ? `?version=${version}` : "")).then(
-    getResponse
-  );
+export const invoice = (token = null) =>
+  GET("/v1/invoice?" + qs.stringify({ token })).then(getResponse);
 
 export const makeInvoice = (userid, month, year, csv, attachments = []) => ({
   file: [

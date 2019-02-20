@@ -130,6 +130,9 @@ export const getUserInvoiceFilterCounts = state => {
 export const getCsrfIsNeeded = state =>
   state.app ? state.app.csrfIsNeeded : null;
 
+export const isShowingInviteConfirmation = state =>
+  state.app.isShowingInviteConfirmation;
+
 export const isShowingSignupConfirmation = state =>
   state.app.isShowingSignupConfirmation;
 

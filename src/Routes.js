@@ -15,6 +15,8 @@ import UserLookup from "./components/UserLookupPage";
 import SignupNext from "./components/SignupNextStepPage";
 import ForgottenPassword from "./components/ForgottenPasswordPage";
 import ForgottenPasswordSuccess from "./components/ForgottenPassword/SuccessPage";
+import InviteUser from "./components/InviteUserPage";
+import InviteUserSuccess from "./components/InviteUser/SuccessPage";
 import PasswordReset from "./components/PasswordResetPage";
 import PasswordResetSuccess from "./components/PasswordReset/SuccessPage";
 import Verify from "./components/Verify";
@@ -76,6 +78,16 @@ class Routes extends Component {
         <AdminAuthenticatedRoute
           path="/admin/unreviewed"
           component={InvoiceListing}
+        />
+        <AdminAuthenticatedRoute
+          path="/admin/invite"
+          component={admin(InviteUser)}
+          exact
+        />
+        <AdminAuthenticatedRoute
+          path="/admin/invite/next"
+          component={admin(InviteUserSuccess)}
+          exact
         />
         <AdminAuthenticatedRoute
           path="/admin"
